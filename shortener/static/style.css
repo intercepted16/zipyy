@@ -1,0 +1,29 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+  }
+}
+
+.main {
+  display: none;
+}
+
+.light-text {
+  font-weight: 200;
+}
+
+.larger-text {
+  font-size: calc(1.25rem);
+}
+
+@media only screen and (max-width: 768px) {
+  #inputDiv {
+    margin-bottom: 10px;
+  }
+}
