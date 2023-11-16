@@ -1,12 +1,25 @@
-from os import path
-import sys
+from os import abort, path
 from conf import *
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, abort
 import sys
 import sqlite3
 import random
 import string
-import os
+
+
+con = sqlite3.connect("database/urls.db", check_same_thread=False)
+cur = con.cursor()
+
+
+def get_destination_url(path):
+    # Use proper SQL query to retrieve the destination_url based on the path
+    cur.execute("SELECT ORIGINAL FROM URLS WHERE SHORTENED=?", (path,))
+    result = cur.fetchone()
+
+    if result:
+        return result[0]
+    else:
+        return None
 
 
 def get_html(path):
@@ -14,21 +27,6 @@ def get_html(path):
         html = file.read()
     return html
 
-
-def update():
-    for file in os.listdir("redirects"):
-        name = file[:-5]
-        print(name)
-        print(get_html(f"redirects/{name}.html"))
-
-        # Use a default argument to capture the current value of name
-        app.route(f"/{name}", endpoint=name)(
-            lambda n=name: get_html(f"redirects/{n}.html")
-        )
-
-
-con = sqlite3.connect("database/urls.db", check_same_thread=False)
-cur = con.cursor()
 
 if getattr(sys, "frozen", False):
     template_folder = path.join(sys._MEIPASS, "templates")
@@ -43,13 +41,27 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/<path:path>")
+def _redirect(path):
+    return (
+        redirect(f"http://{get_destination_url(path)}")
+        if get_destination_url(path) is not None
+        else abort(404)
+    )
+
+
 @app.route("/add")
 def add():
     url = request.args.get("url")
     ran_id = ""
 
     if url is not None and url != "":
-        while ran_id == cur.execute("SELECT SHORTENED FROM URLS;") or ran_id == "":
+        while (
+            ran_id == ""
+            or cur.execute(
+                "SELECT SHORTENED FROM URLS WHERE SHORTENED=?;", (ran_id,)
+            ).fetchone()
+        ):
             ran_id = "".join(
                 random.choice(string.ascii_letters + string.digits)
                 for _ in range(ID_LENGTH)
@@ -60,30 +72,6 @@ def add():
             "INSERT INTO URLS (ORIGINAL, SHORTENED) VALUES (?, ?);", (url, ran_id)
         )
         con.commit()
-
-        # After an ID that is not in the database has been found,
-        # dynamically create a webpage that redirects to the original URL
-        with open(f"redirects/{ran_id}.html", "w") as file:
-            html = f"""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Redirecting you...</title>
-                </head>
-                <body>
-                    <noscript>
-                      <meta http-equiv="refresh" content="0; URL=http://{url}">
-                    </noscript>
-                    <script>
-                        window.location.replace('http://' + '{url}')
-                    </script>
-                </body>
-                </html>
-                """
-            file.write(html)
-    update()
     return ran_id
 
 
@@ -93,5 +81,4 @@ def page_not_found(e):
 
 
 if __name__ == "__main__":
-    update()
     app.run(host="0.0.0.0", port=80, debug=True)

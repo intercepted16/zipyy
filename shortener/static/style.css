@@ -12,6 +12,7 @@
 
 .main {
   display: none;
+  overflow-wrap: break-word;
 }
 
 .light-text {

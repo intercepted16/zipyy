@@ -1,2 +1,2 @@
-# Configuration file for Hoogle
 ID_LENGTH = 6
+DATABASE = "urls.db"
