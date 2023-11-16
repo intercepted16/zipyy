@@ -30,4 +30,5 @@ document
     document.querySelector(
       "#shortenedUrl"
     ).textContent = `${window.location.hostname}/${id}`;
+    truncateText("originalUrl", 25); // Replace 'myTextElement' and 50 with your element ID and desired character length
   });

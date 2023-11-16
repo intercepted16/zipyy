@@ -1,2 +1,2 @@
 ID_LENGTH = 6
-DATABASE = "urls.db"
+DATABASE_PATH = "database/urls.db"

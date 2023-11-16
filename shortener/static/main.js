@@ -28,3 +28,13 @@ window
     // Save the user's preferred color scheme in localStorage
     localStorage.setItem("theme", theme);
   });
+
+function truncateText(elementId, maxLength) {
+  var element = document.getElementById(elementId);
+
+  if (element.textContent.length > maxLength) {
+    // Truncate the text and append an ellipsis
+    var truncatedText = element.textContent.substring(0, maxLength) + "...";
+    element.textContent = truncatedText;
+  }
+}
