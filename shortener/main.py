@@ -1,35 +1,34 @@
+import os
 from flask import Flask, request, render_template, redirect, abort
 import random
 import string
 import pymysql
 from conf import *
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-# MySQL database configuration
-db_config_create_db = {
-    "host": "localhost",
-    "user": "admin",
-    "password": "6PswC0IwmZ1ApvI529PC3IxLX98n",
-}
-
-db_config_main = {
-    "host": "localhost",
-    "user": "admin",
-    "password": "6PswC0IwmZ1ApvI529PC3IxLX98n",
-    "database": "urls",
+db_config = {
+    "host": DATABASE_HOST,
+    "port": DATABASE_PORT,
+    "user": DATABASE_ROOT_USERNAME,
+    "password": os.getenv("DATABASE_ROOT_PASSWORD"),
 }
 
 
 def create_database():
-    connection = pymysql.connect(**db_config_create_db)
+    connection = pymysql.connect(**db_config)
     with connection.cursor() as cursor:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS urls")
+        cursor.execute("CREATE DATABASE IF NOT EXISTS shortener")
     connection.close()
 
 
 def get_connection():
-    return pymysql.connect(**db_config_main)
+    conn = pymysql.connect(**db_config)
+    conn.select_db("shortener")  # Select the 'shortener' database
+    return conn
 
 
 # Create the database if it doesn't exist
@@ -40,7 +39,7 @@ conn = get_connection()
 with conn.cursor() as cur:
     cur.execute(
         """
-        CREATE TABLE IF NOT EXISTS URLS (
+        CREATE TABLE IF NOT EXISTS urls (
             ID INT AUTO_INCREMENT PRIMARY KEY,
             ORIGINAL VARCHAR(255) NOT NULL,
             SHORTENED VARCHAR(50) NOT NULL
@@ -55,7 +54,7 @@ def get_destination_url(shortened):
     # Use proper SQL query to retrieve the destination_url based on the path
     conn = get_connection()
     with conn.cursor() as cur:
-        cur.execute("SELECT ORIGINAL FROM URLS WHERE SHORTENED=%s", (shortened,))
+        cur.execute("SELECT ORIGINAL FROM urls WHERE SHORTENED=%s", (shortened,))
         result = cur.fetchone()
     conn.close()
 
@@ -91,7 +90,7 @@ def add():
             while (
                 ran_id == ""
                 or cur.execute(
-                    "SELECT SHORTENED FROM URLS WHERE SHORTENED=%s", (ran_id,)
+                    "SELECT SHORTENED FROM urls WHERE SHORTENED=%s", (ran_id,)
                 )
                 > 0
             ):
@@ -102,7 +101,8 @@ def add():
 
             # Insert the new URL and its corresponding shortened ID into the database
             cur.execute(
-                "INSERT INTO URLS (ORIGINAL, SHORTENED) VALUES (%s, %s)", (url, ran_id)
+                "INSERT INTO urls (ORIGINAL, SHORTENED) VALUES (%s, %s)",
+                (url, ran_id),
             )
             conn.commit()
         conn.close()
