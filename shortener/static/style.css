@@ -10,7 +10,7 @@
   }
 }
 
-.main {
+main {
   display: none;
   overflow-wrap: break-word;
 }
@@ -27,4 +27,41 @@
   #inputDiv {
     margin-bottom: 10px;
   }
+  #signupForm {
+    width: 300px;
+  }
+  #loginForm {
+    width: 300px !important;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  #usernameLogoutLine {
+    display: none !important;
+  }
+  #signupNav {
+    margin-bottom: 10px;
+    margin-left: 0px !important;
+  }
+  #loginNav {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-left: 0px !important;
+  }
+}
+
+#loginForm {
+  width: 389.64px;
+}
+
+#loggedInDiv {
+  display: none !important;
+}
+
+#usernameLogoutLine {
+  display: none;
+}
+
+#accountEmailSpan {
+  margin-right: 10px;
 }

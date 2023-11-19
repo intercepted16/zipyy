@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block content %}
+<div
+  style="text-align: center"
+  class="d-flex align-items-center justify-content-center flex-column"
+>
+  <h1>Signup</h1>
+  <form class="needs-validation" id="signupForm" novalidate>
+    <div class="mb-3">
+      <label for="signupEmailInput" class="form-label">Email address</label>
+      <input
+        type="email"
+        class="form-control"
+        id="signupEmailInput"
+        aria-describedby="emailHelp"
+        required
+      />
+      <div class="invalid-feedback">Please enter a valid email address.</div>
+    </div>
+    <div class="mb-3">
+      <label for="signupPasswordInput" class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="signupPasswordInput"
+        required
+      />
+      <div class="invalid-feedback">Incorrect password.</div>
+    </div>
+    <div class="mb-3 form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="signupTermsAndConditionsCheckBox"
+        required
+      />
+      <label class="form-check-label" for="signupTermsAndConditionsCheckBox"
+        >I agree to the <a href="terms">terms & conditions</a> and
+        <a href="privacy">privacy policy</a></label
+      >
+      <div class="invalid-feedback">
+        You must agree to the terms & conditions before submitting.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="signupBtn">Signup</button>
+  </form>
+</div>
+<script src="static/signup.js"></script>
+{% endblock %}

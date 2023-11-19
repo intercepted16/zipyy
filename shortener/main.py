@@ -1,67 +1,4 @@
-import os
-from flask import Flask, request, render_template, redirect, abort
-import random
-import string
-import pymysql
-from conf import *
-from dotenv import load_dotenv
-
-load_dotenv()
-
-app = Flask(__name__)
-
-db_config = {
-    "host": DATABASE_HOST,
-    "port": DATABASE_PORT,
-    "user": DATABASE_ROOT_USERNAME,
-    "password": os.getenv("DATABASE_ROOT_PASSWORD"),
-}
-
-
-def create_database():
-    connection = pymysql.connect(**db_config)
-    with connection.cursor() as cursor:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS shortener")
-    connection.close()
-
-
-def get_connection():
-    conn = pymysql.connect(**db_config)
-    conn.select_db("shortener")  # Select the 'shortener' database
-    return conn
-
-
-# Create the database if it doesn't exist
-create_database()
-
-# Create the table if it doesn't exist
-conn = get_connection()
-with conn.cursor() as cur:
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS urls (
-            ID INT AUTO_INCREMENT PRIMARY KEY,
-            ORIGINAL VARCHAR(255) NOT NULL,
-            SHORTENED VARCHAR(50) NOT NULL
-        )
-    """
-    )
-    conn.commit()
-conn.close()
-
-
-def get_destination_url(shortened):
-    # Use proper SQL query to retrieve the destination_url based on the path
-    conn = get_connection()
-    with conn.cursor() as cur:
-        cur.execute("SELECT ORIGINAL FROM urls WHERE SHORTENED=%s", (shortened,))
-        result = cur.fetchone()
-    conn.close()
-
-    if result:
-        return result[0]
-    else:
-        return None
+from init import *
 
 
 @app.route("/")
@@ -90,7 +27,7 @@ def add():
             while (
                 ran_id == ""
                 or cur.execute(
-                    "SELECT SHORTENED FROM urls WHERE SHORTENED=%s", (ran_id,)
+                    "SELECT shortened FROM urls WHERE shortened=%s", (ran_id,)
                 )
                 > 0
             ):
@@ -101,7 +38,7 @@ def add():
 
             # Insert the new URL and its corresponding shortened ID into the database
             cur.execute(
-                "INSERT INTO urls (ORIGINAL, SHORTENED) VALUES (%s, %s)",
+                "INSERT INTO urls (ORIGINAL, shortened) VALUES (%s, %s)",
                 (url, ran_id),
             )
             conn.commit()
@@ -109,9 +46,84 @@ def add():
     return ran_id
 
 
+@app.route("/cookie", methods=["POST"])
+def add_cookies():
+    data = request.json
+    # Get the values of 'key' and 'value' from the POST request
+    key = data["key"]
+    value = data["value"]
+    # Check if both 'key' and 'value' are present in the request
+    if key is None or value is None:
+        return "400"
+
+    # Create a response object
+    response = make_response("200")
+    expiration_time = datetime.datetime.now() + datetime.timedelta(weeks=2)
+    # Add the cookies to the response
+    response.set_cookie(key, value, expires=expiration_time)
+
+    return response
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
+
+
+@app.route("/get")
+def get():
+    path = request.args.get("path")
+    if path is not None and path != "" and os.path.exists(path):
+        with open(path, "r") as file:
+            return file.read()
+    return "404"
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        data = request.json
+        email = data["email"]
+        password = data["password"]
+        print(email, password)
+        """Create an user object & call the signup method."""
+        user = User(user=email, password=password)
+        user.signup()
+        return "200"
+    else:
+        return render_template("signup.html")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        data = request.json
+        email = data["email"]
+        password = data["password"]
+        """Create a user object & call the login method."""
+        user = User(user=email, password=password)
+        return user.login()
+    else:
+        return render_template("login.html")
+
+
+@app.route("/loggedin", methods=["POST"])
+def logged_in():
+    if not current_user.is_authenticated:
+        return jsonify({"logged_in": False, "user_id": None, "username": None})
+    return jsonify(
+        {
+            "logged_in": True,
+            "user_id": current_user.get_id(),
+            "username": current_user.get_username(),
+        }
+    )
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    logout_user()
+    return "200"
 
 
 if __name__ == "__main__":

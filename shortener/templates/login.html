@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block content %}
+<div
+  style="text-align: center"
+  class="d-flex align-items-center justify-content-center flex-column"
+>
+  <h1>Login</h1>
+  <form class="needs-validation" id="loginForm" novalidate>
+    <div class="mb-3">
+      <label for="loginEmailInput" class="form-label">Email address</label>
+      <input
+        type="email"
+        class="form-control"
+        id="loginEmailInput"
+        aria-describedby="emailHelp"
+        required
+      />
+      <div class="invalid-feedback">Please enter a valid email address.</div>
+    </div>
+    <div class="mb-3">
+      <label for="loginPasswordInput" class="form-label">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="loginPasswordInput"
+        required
+      />
+      <div class="invalid-feedback">Incorrect password.</div>
+    </div>
+    <button type="submit" id="loginButton" class="btn btn-primary">
+      Login
+    </button>
+  </form>
+</div>
+<script src="static/login.js"></script>
+{% endblock %}
