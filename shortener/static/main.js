@@ -17,7 +17,16 @@ fetch("get?path=templates/menubar.html")
     }
     setTheme();
     checkLoginStatus();
-    document.querySelector("main").style.display = "block";
+    setTimeout(() => {
+      // Apply styles to smoothly transition the nav element
+      document.querySelector("nav").style.display = "block";
+      document.querySelector("nav").style.opacity = 1;
+      document.querySelector("nav").style.transform = "translateY(0)";
+
+      // Make signupNav and loginNav visible
+      document.querySelector("#loginNav").style.display = "block";
+      document.querySelector("main").style.display = "block";
+    }, 50);
   })
   .catch(function (error) {
     console.error("Error fetching menubar.html:", error);
@@ -55,7 +64,7 @@ function setTheme() {
 }
 
 function checkLoginStatus() {
-  fetch("loggedin", {
+  fetch("userdata", {
     method: "POST",
   })
     .then((response) => {
@@ -82,7 +91,6 @@ function checkLoginStatus() {
           data["username"];
         document.querySelector("#usernameLogoutLine").style.display = "block";
         if (page.endsWith("")) {
-          console.log(page);
           document
             .querySelector("#loggedInDiv")
             .setAttribute("style", "display: flex !important");
@@ -94,6 +102,7 @@ function checkLoginStatus() {
           .addEventListener("click", function () {
             window.location.href = "login";
           });
+        document.querySelector("#signupNav").style.display = "block";
         document
           .querySelector("#signupNav")
           .addEventListener("click", function () {

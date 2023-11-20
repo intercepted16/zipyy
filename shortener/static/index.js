@@ -13,7 +13,7 @@ document
         .getElementsByTagName("form")[0].children;
 
       // Iterate over the child elements, excluding the last one
-      for (let i = 0; i < childElements.length - 1; i++) {
+      for (let i = 0; i < childElements.length; i++) {
         // Perform your desired operation here
         childElements[i].style.display = "none";
       }
@@ -46,3 +46,18 @@ function isValidUrl(url) {
 
   return url.match(urlPattern) || url.match(ipPattern);
 }
+
+document
+  .querySelector("#urlsTable")
+  .getElementsByTagName("tbody")[0]
+  .querySelectorAll("tr")
+  .forEach(function (row) {
+    row
+      .querySelectorAll("td")[2]
+      .querySelectorAll("button")[0]
+      .addEventListener("click", function () {
+        navigator.clipboard.writeText(
+          row.querySelectorAll("td")[1].textContent
+        );
+      });
+  });

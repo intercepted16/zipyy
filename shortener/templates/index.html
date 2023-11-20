@@ -8,10 +8,15 @@
     <span class="text-primary" style="font-weight: 700">free</span>
     (as in no limits!) URL shortener.
   </h1>
-  <p class="larger-text text-success">Accountless & private.</p>
+  <p class="larger-text text-success">
+    No account required, and data is not shared.
+  </p>
   <p style="margin-bottom: 0" class="text-warning fw-bold">Warning:</p>
   <p class="fst-italic">
-    *Data is stored on Github, however gitignored for privacy.
+    *Website & data is hosted on an Amazon AWS EC2 instance & URLS are
+    accessible <br />
+    on a MySQL database. Check out the <a href="sourcecode">source code</a> for
+    more information.
   </p>
 </div>
 
@@ -21,19 +26,21 @@
       <!-- Left container for URL shortener input with border -->
       <div id="inputDiv" class="border p-3">
         <p class="larger-text">Original URL:</p>
-        <form class="needs-validation">
-          <label for="urlInput">Enter URL:</label>
+        <form>
+          <label id="enterUrlLabel" for="urlInput">Enter URL:</label>
           <input
             type="text"
             id="urlInput"
+            name="urlInput"
             class="form-control"
             placeholder="Paste your URL here"
+            autocomplete="off"
           />
           <button class="btn btn-primary mt-2" id="shortenButton">
             Shorten
           </button>
-          <a id="originalUrl"></a>
         </form>
+        <a id="originalUrl"></a>
       </div>
     </div>
 
@@ -53,7 +60,58 @@
   id="loggedInDiv"
   class="d-flex align-items-center justify-content-center flex-column"
 >
-  Logged In
+  {% if urls is not none %}
+  <table class="table table-bordered table-hover" id="urlsTable">
+    <thead>
+      <tr>
+        <th>Original</th>
+        <th>Shortened</th>
+        <th>Action</th>
+        <!-- Add a new header for the action column -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for url in urls %}
+      <tr data-href="https://example.com/user/1">
+        <td>{{ url.original }}</td>
+        <td>{{ url.shortened }}</td>
+        <td>
+          <!-- Add the copy & edit button using Font Awesome icons -->
+          <div class="btn-group">
+            <button
+              class="btn btn-sm btn-primary copy-button rounded-3"
+              style="margin-right: 10px"
+              data-original="{{ url.original }}"
+              data-shortened="{{ url.shortened }}"
+            >
+              <i class="fas fa-copy"></i> Copy
+            </button>
+            <button
+              class="btn btn-sm btn-secondary"
+              style="width: 30px; border-radius: 15px"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-edit"></i> Edit
+              </a>
+              <a class="dropdown-item" href="#">
+                <i class="fas fa-trash-alt"></i> Delete
+              </a>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% endif %}
+
+  <script src="static/index.js"></script>
+  {% endblock %}
 </div>
-<script src="static/index.js"></script>
-{% endblock %}

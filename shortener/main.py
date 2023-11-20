@@ -3,7 +3,20 @@ from init import *
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("USE shortener")
+        urls = []
+        user_id = current_user.get_id()
+        if user_id is not None:
+            cur.execute(
+                "SELECT original, shortened FROM urls WHERE user_id = %s",
+                user_id,
+            )
+            rows = cur.fetchall()
+            for row in rows:
+                urls.append({"original": row[0], "shortened": row[1]})
+    return render_template("index.html", urls=urls if urls else None)
 
 
 @app.route("/<path:shortened>")
@@ -38,8 +51,8 @@ def add():
 
             # Insert the new URL and its corresponding shortened ID into the database
             cur.execute(
-                "INSERT INTO urls (ORIGINAL, shortened) VALUES (%s, %s)",
-                (url, ran_id),
+                "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
+                (url, ran_id, current_user.get_id()),
             )
             conn.commit()
         conn.close()
@@ -107,7 +120,7 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/loggedin", methods=["POST"])
+@app.route("/userdata", methods=["GET", "POST"])
 def logged_in():
     if not current_user.is_authenticated:
         return jsonify({"logged_in": False, "user_id": None, "username": None})
@@ -116,6 +129,7 @@ def logged_in():
             "logged_in": True,
             "user_id": current_user.get_id(),
             "username": current_user.get_username(),
+            "urls": current_user.get_urls(),
         }
     )
 

@@ -40,11 +40,9 @@ main {
     display: none !important;
   }
   #signupNav {
-    margin-bottom: 10px;
     margin-left: 0px !important;
   }
   #loginNav {
-    margin-bottom: 10px;
     margin-top: 10px;
     margin-left: 0px !important;
   }
@@ -64,4 +62,26 @@ main {
 
 #accountEmailSpan {
   margin-right: 10px;
+}
+
+#loginNav {
+  display: none;
+}
+#signupNav {
+  display: none;
+}
+
+nav {
+  display: none;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+#urlsTable {
+  margin-top: 20px;
+  width: 50vw;
+}
+
+@media only screen and (max-width: 688px) {
 }

@@ -116,7 +116,18 @@ class User(UserMixin):
             cur.execute("USE shortener")
             cur.execute("SELECT username FROM users WHERE id = %s", self.user_id)
             user = cur.fetchone()
-        return user
+        return user[0]
+
+    def get_urls(self):
+        conn = pymysql.connect(**db_config)
+        with conn.cursor() as cur:
+            cur.execute("USE shortener")
+            cur.execute("SELECT shortened FROM urls WHERE user_id = %s", self.user_id)
+            rows = cur.fetchall()
+            urls = []
+            for row in rows:
+                urls.append(row[0])
+            return urls
 
     def get_id(self):
         return str(self.user_id)  # Convert to string if the ID is not a string
