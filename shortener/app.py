@@ -10,12 +10,13 @@ def index():
         user_id = current_user.get_id()
         if user_id is not None:
             cur.execute(
-                "SELECT original, shortened FROM urls WHERE user_id = %s",
+                "SELECT original, shortened, id FROM urls WHERE user_id = %s",
                 user_id,
             )
             rows = cur.fetchall()
             for row in rows:
-                urls.append({"original": row[0], "shortened": row[1]})
+                urls.append({"original": row[0], "shortened": row[1], "id": row[2]})
+    conn.close()
     return render_template("index.html", urls=urls if urls else None)
 
 
@@ -49,11 +50,30 @@ def add():
                     for _ in range(ID_LENGTH)
                 )
 
-            # Insert the new URL and its corresponding shortened ID into the database
-            cur.execute(
-                "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
-                (url, ran_id, current_user.get_id()),
-            )
+            """Check if the entry before the current entry was an entry before the previous version of the current entry,
+                implying that the current entry's ID should be subtracted by 1."""
+            try:
+                cur.execute("SELECT * FROM urls ORDER BY id DESC LIMIT 1")
+                id = cur.fetchone()[0]
+                cur.execute("SELECT deleted FROM urls WHERE id = %s", id)
+                if bool(cur.fetchone()[0]):
+                    cur.execute(
+                        "INSERT INTO urls (id, ORIGINAL, shortened, user_id) VALUES (%s, %s, %s, %s)",
+                        (id + 1, url, ran_id, current_user.get_id()),
+                    )
+                    cur.execute("UPDATE urls SET deleted = 0 WHERE id = %s", id)
+                else:
+                    print("not deleted above it")
+                    cur.execute(
+                        "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
+                        (url, ran_id, current_user.get_id()),
+                    )
+            except TypeError:
+                # First entry
+                cur.execute(
+                    "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
+                    (url, ran_id, current_user.get_id()),
+                )
             conn.commit()
         conn.close()
     return ran_id
@@ -123,12 +143,12 @@ def login():
 @app.route("/userdata", methods=["GET", "POST"])
 def logged_in():
     if not current_user.is_authenticated:
-        return jsonify({"logged_in": False, "user_id": None, "username": None})
+        return jsonify({"logged_in": False, "user_id": None, "email": None})
     return jsonify(
         {
             "logged_in": True,
             "user_id": current_user.get_id(),
-            "username": current_user.get_username(),
+            "email": current_user.get_email(),
             "urls": current_user.get_urls(),
         }
     )
@@ -138,6 +158,48 @@ def logged_in():
 def logout():
     logout_user()
     return "200"
+
+
+@app.route("/delete", methods=["POST"])
+def delete():
+    id = request.json["id"]
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("USE shortener")
+        if id != 1:
+            cur.execute("UPDATE urls SET deleted = 1 WHERE id = %s", id - 1)
+        cur.execute("DELETE FROM urls WHERE id = %s", id)
+        conn.commit()
+    conn.close()
+    return "200"
+
+
+@app.route("/edit", methods=["POST"])
+def edit():
+    data = request.json
+    id = data["id"]
+    modify = data["modified"]
+    print(id, modify)
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("USE shortener")
+        cur.execute(
+            "UPDATE urls SET original = %s WHERE id = %s",
+            (modify, id),
+        )
+        conn.commit()
+    conn.close()
+    return "200"
+
+
+@app.route("/sourcecode")
+def source_code():
+    return redirect("https://github.com/passmgrgui/Shortly")
+
+
+@app.route("/noscript")
+def no_script():
+    return render_template("noscript.html")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import os
+from markupsafe import Markup
 from flask import (
     Flask,
     request,
@@ -23,7 +24,6 @@ from flask_login import (
     logout_user,
     current_user,
 )
-
 
 load_dotenv()
 app = Flask(__name__)
@@ -52,7 +52,7 @@ def _init():
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                username TEXT,
+                email TEXT,
                 hash TEXT
             )
             """
@@ -65,6 +65,7 @@ def _init():
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 original TEXT NOT NULL,
                 shortened VARCHAR(%s) NOT NULL,
+                deleted BOOLEAN DEFAULT 0,
                 user_id INT
             )
             """,
@@ -110,13 +111,13 @@ class User(UserMixin):
         self.password = password
         self.db_connection = None
 
-    def get_username(self):
+    def get_email(self):
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cur:
             cur.execute("USE shortener")
-            cur.execute("SELECT username FROM users WHERE id = %s", self.user_id)
+            cur.execute("SELECT email FROM users WHERE id = %s", self.user_id)
             user = cur.fetchone()
-        return user[0]
+        return user[0] if user is not None else None
 
     def get_urls(self):
         conn = pymysql.connect(**db_config)
@@ -158,7 +159,7 @@ class User(UserMixin):
         try:
             with self.db_connection.cursor() as cursor:
                 # Check if the user already exists
-                cursor.execute("SELECT * FROM users WHERE username = %s", (self.user,))
+                cursor.execute("SELECT * FROM users WHERE email = %s", (self.user,))
                 existing_user = cursor.fetchone()
 
                 if existing_user:
@@ -169,7 +170,7 @@ class User(UserMixin):
                     self.password.encode(), bcrypt.gensalt()
                 )
                 cursor.execute(
-                    "INSERT INTO users (username, hash) VALUES (%s, %s)",
+                    "INSERT INTO users (email, hash) VALUES (%s, %s)",
                     (self.user, hashed_password.decode("utf-8")),
                 )
                 self.db_connection.commit()
@@ -197,12 +198,12 @@ class User(UserMixin):
         try:
             with self.db_connection.cursor() as cursor:
                 # Check if the user exists
-                cursor.execute("SELECT * FROM users WHERE username = %s", (self.user,))
+                cursor.execute("SELECT * FROM users WHERE email = %s", (self.user,))
                 user = cursor.fetchone()
                 print(f"Logging in: {self.user}, {self.password}")
 
                 if not user:
-                    return "User not found"
+                    return "401"
 
                 # Check if the password matches
                 if not bcrypt.checkpw(
@@ -212,7 +213,7 @@ class User(UserMixin):
 
                 # Create a User object and login the user
                 user_obj = User(
-                    user_id=user["id"], user=user["username"], password=user["hash"]
+                    user_id=user["id"], user=user["email"], password=user["hash"]
                 )
                 login_user(user_obj, remember=remember)
 

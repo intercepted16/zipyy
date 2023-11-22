@@ -1,167 +1,170 @@
-let path = window.location.pathname;
-let fullPath = window.location.href;
-let page = path.split("/").pop().trim();
+$(document).ready(function () {
+  let path = window.location.pathname;
+  let page = path.split("/").pop().trim();
 
-fetch("get?path=templates/menubar.html")
-  .then(function (response) {
-    return response.text();
+  let systemTheme = "light";
+  if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  ) {
+    systemTheme = "dark";
+  }
+
+  fetch("get?path=templates/menubar.html", {
+    method: "GET",
   })
-  .then(function (data) {
-    let tempDiv = document.createElement("div");
-    tempDiv.innerHTML = data;
+    .then((response) => response.text())
+    .then(function (data) {
+      let tempDiv = $("<div>").html(data);
 
-    let navElement = tempDiv.querySelector("nav");
+      let navElement = tempDiv.find("nav");
 
-    if (navElement) {
-      document.body.prepend(navElement);
-    }
-    setTheme();
-    checkLoginStatus();
-    setTimeout(() => {
-      // Apply styles to smoothly transition the nav element
-      document.querySelector("nav").style.display = "block";
-      document.querySelector("nav").style.opacity = 1;
-      document.querySelector("nav").style.transform = "translateY(0)";
+      if (navElement.length) {
+        $("body").prepend(navElement);
+      }
+      setTheme();
+      checkLoginStatus();
+      setTimeout(() => {
+        // Apply styles to smoothly transition the nav element
+        $("nav").css({
+          display: "block",
+          opacity: 1,
+        });
 
-      // Make signupNav and loginNav visible
-      document.querySelector("#loginNav").style.display = "block";
-      document.querySelector("main").style.display = "block";
-    }, 50);
-  })
-  .catch(function (error) {
-    console.error("Error fetching menubar.html:", error);
-  });
+        // Make signupNav and loginNav visible
+        $("#loginNav").css("display", "block");
+        $("main").css("display", "block");
+      }, 50);
+    })
+    .catch(function (error) {
+      console.error("Error fetching menubar.html:", error);
+    });
 
-function setTheme() {
-  // Check if the user has a preferred color scheme stored
-  const savedTheme = localStorage.getItem("theme");
+  function setTheme() {
+    // Check if the user has a preferred color scheme stored
+    const savedTheme = localStorage.getItem("theme");
 
-  if (savedTheme) {
-    document.body.setAttribute("data-bs-theme", savedTheme);
-    if (savedTheme == "dark") {
-      document.querySelector("#signupNav").classList.remove("btn-secondary");
-      document.querySelector("#signupNav").classList.add("btn-dark");
-      document.querySelector("#loginNav").classList.remove("btn-secondary");
-      document.querySelector("#loginNav").classList.add("btn-dark");
-    }
-  } else {
-    // If no preferred color scheme, check system preference
-    if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      document.body.setAttribute("data-bs-theme", "dark");
-      try {
-        document.querySelector("#signupNav").classList.remove("btn-secondary");
-        document.querySelector("#signupNav").classList.add("btn-dark");
-        document.querySelector("#loginNav").classList.remove("btn-secondary");
-        document.querySelector("#loginNav").classList.add("btn-dark");
-      } catch (e) {}
+    // Check the current theme applied to the body
+
+    if (savedTheme) {
+      // If the saved theme is different from the current theme, update the local storage
+      if (savedTheme !== systemTheme) {
+        localStorage.setItem("theme", systemTheme);
+      }
+
+      // Apply the saved theme to the body
+      $("body").attr("data-bs-theme", savedTheme);
+
+      if (savedTheme == "dark") {
+        $("#signupNav").removeClass("btn-secondary").addClass("btn-dark");
+        $("#loginNav").removeClass("btn-secondary").addClass("btn-dark");
+      }
     } else {
-      document.body.setAttribute("data-bs-theme", "light");
+      // If no preferred color scheme, check system preference
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        const systemTheme = "dark";
+
+        // If the system theme is different from the current theme, update the local storage
+        if (systemTheme !== systemTheme) {
+          localStorage.setItem("theme", systemTheme);
+        }
+
+        $("body").attr("data-bs-theme", systemTheme);
+
+        try {
+          $("#signupNav").removeClass("btn-secondary").addClass("btn-dark");
+          $("#loginNav").removeClass("btn-secondary").addClass("btn-dark");
+        } catch (e) {}
+      } else {
+        const defaultTheme = "light";
+
+        // If the default theme is different from the current theme, update the local storage
+        if (defaultTheme !== systemTheme) {
+          localStorage.setItem("theme", defaultTheme);
+        }
+
+        $("body").attr("data-bs-theme", defaultTheme);
+      }
     }
   }
-}
 
-function checkLoginStatus() {
-  fetch("userdata", {
-    method: "POST",
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
+  function checkLoginStatus() {
+    fetch("userdata", {
+      method: "POST",
     })
-    .then((data) => {
-      if (data["logged_in"] == true) {
-        console.log("User is logged in");
-        document.querySelector("#loginNav").textContent = "Logout";
-        document
-          .querySelector("#loginNav")
-          .addEventListener("click", function (e) {
-            e.preventDefault();
-            fetch("logout", {
-              method: "POST",
+      .then((response) => response.json())
+      .then(function (data) {
+        if (data["logged_in"] == true) {
+          console.log("User is logged in");
+          $("#loginNav")
+            .text("Logout")
+            .on("click", function (e) {
+              e.preventDefault();
+              fetch("logout", {
+                method: "POST",
+              });
+              window.location.reload();
             });
-            window.location.reload();
-          });
-        document.querySelector("#signupNav").style.display = "none";
-        document.querySelector("#accountEmailSpan").textContent =
-          data["username"];
-        document.querySelector("#usernameLogoutLine").style.display = "block";
-        if (page.endsWith("")) {
-          document
-            .querySelector("#loggedInDiv")
-            .setAttribute("style", "display: flex !important");
-        }
-      } else {
-        console.log("User is not logged in");
-        document
-          .querySelector("#loginNav")
-          .addEventListener("click", function () {
+          $("#signupNav").css("display", "none");
+          $("#accountEmailSpan").text(data["email"]);
+          $("#emailLogoutLine").css("display", "block");
+          if (page.endsWith("")) {
+            $("#loggedInDiv").attr("style", "display: flex !important");
+          }
+        } else {
+          console.log("User is not logged in");
+          $("#loginNav").on("click", function () {
             window.location.href = "login";
           });
-        document.querySelector("#signupNav").style.display = "block";
-        document
-          .querySelector("#signupNav")
-          .addEventListener("click", function () {
-            window.location.href = "signup";
-          });
-      }
-    });
-}
+          $("#signupNav")
+            .css("display", "block")
+            .on("click", function () {
+              window.location.href = "signup";
+            });
+        }
+      })
+      .catch(function (error) {
+        console.error("Error fetching userdata:", error);
+      });
+  }
 
-window
-  .matchMedia("(prefers-color-scheme: dark)")
-  .addEventListener("change", ({ matches }) => {
+  $(window.matchMedia("(prefers-color-scheme: dark)")).on("change", (event) => {
+    const matches = event.target.matches;
+    console.log(matches);
     const theme = matches ? "dark" : "light";
-    document.body.setAttribute("data-bs-theme", theme);
+    $("body").attr("data-bs-theme", theme);
     // Save the user's preferred color scheme in localStorage
     localStorage.setItem("theme", theme);
+    console.log(`Switched: ${theme}`);
     if (theme == "light") {
-      document.querySelector("#signupNav").classList.remove("btn-dark");
-      document.querySelector("#signupNav").classList.add("btn-secondary");
-      document.querySelector("#loginNav").classList.remove("btn-dark");
-      document.querySelector("#loginNav").classList.add("btn-secondary");
+      $("#signupNav").removeClass("btn-dark").addClass("btn-secondary");
+      $("#loginNav").removeClass("btn-dark").addClass("btn-secondary");
     } else {
-      document.querySelector("#signupNav").classList.remove("btn-secondary");
-      document.querySelector("#signupNav").classList.add("btn-dark");
-      document.querySelector("#loginNav").classList.remove("btn-secondary");
-      document.querySelector("#loginNav").classList.add("btn-dark");
+      $("#signupNav").removeClass("btn-secondary").addClass("btn-dark");
+      $("#loginNav").removeClass("btn-secondary").addClass("btn-dark");
     }
   });
 
-function truncateText(elementId, maxLength) {
-  let element = document.getElementById(elementId);
+  // Example starter JavaScript for disabling form submissions if there are invalid fields
+  (() => {
+    "use strict";
 
-  if (element.textContent.length > maxLength) {
-    // Truncate the text and append an ellipsis
-    let truncatedText = element.textContent.substring(0, maxLength) + "...";
-    element.textContent = truncatedText;
-  }
-}
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = $(".needs-validation");
 
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(() => {
-  "use strict";
-
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  const forms = document.querySelectorAll(".needs-validation");
-
-  // Loop over them and prevent submission
-  Array.from(forms).forEach((form) => {
-    form.addEventListener(
-      "submit",
-      (event) => {
+    // Loop over them and prevent submission
+    $.each(forms, function (index, form) {
+      $(form).on("submit", function (event) {
         if (!form.checkValidity()) {
           event.preventDefault();
           event.stopPropagation();
         }
 
-        form.classList.add("was-validated");
-      },
-      false
-    );
-  });
-})();
+        $(form).addClass("was-validated");
+      });
+    });
+  })();
+});

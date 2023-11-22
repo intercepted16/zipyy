@@ -27,16 +27,10 @@ main {
   #inputDiv {
     margin-bottom: 10px;
   }
-  #signupForm {
-    width: 300px;
-  }
-  #loginForm {
-    width: 300px !important;
-  }
 }
 
 @media only screen and (max-width: 992px) {
-  #usernameLogoutLine {
+  #emailLogoutLine {
     display: none !important;
   }
   #signupNav {
@@ -48,15 +42,11 @@ main {
   }
 }
 
-#loginForm {
-  width: 389.64px;
-}
-
 #loggedInDiv {
   display: none !important;
 }
 
-#usernameLogoutLine {
+#emailLogoutLine {
   display: none;
 }
 
@@ -74,8 +64,6 @@ main {
 nav {
   display: none;
   opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
 #urlsTable {
@@ -83,5 +71,17 @@ nav {
   width: 50vw;
 }
 
-@media only screen and (max-width: 688px) {
+.login-container {
+  margin-top: 5%;
+}
+
+.login-form {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(221, 212, 212, 0.1);
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
 }

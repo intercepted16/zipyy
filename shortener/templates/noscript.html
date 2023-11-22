@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Please enable JavaScript</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      /* Styles for light theme */
+      @media (prefers-color-scheme: light) {
+        body {
+          background-color: #dee2e6; /* light background color */
+          color: #000000; /* dark text color */
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+      }
+
+      /* Styles for dark theme */
+      @media (prefers-color-scheme: dark) {
+        body {
+          margin: 0;
+          background-color: #212529;
+          color: #dee2e6;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+      }
+
+      .container {
+        text-align: center;
+      }
+
+      a {
+        color: #4183c4;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      h1 {
+        letter-spacing: -1px;
+        line-height: 60px;
+        font-size: 50px;
+        font-weight: 100;
+      }
+      p {
+        line-height: 1.6;
+        margin-right: auto;
+        margin-left: auto;
+        width: 500px;
+      }
+
+      ul {
+        list-style: none;
+        margin: 25px 0;
+        padding: 0;
+      }
+      li {
+        display: table-cell;
+        font-weight: bold;
+        width: 1%;
+      }
+
+      .logo {
+        display: inline-block;
+        margin-top: 35px;
+        color: #fff;
+      }
+
+      #suggestions {
+        margin-top: 35px;
+        color: #ccc;
+      }
+      #suggestions a {
+        font-weight: 200;
+        color: #fff;
+        font-size: 14px;
+        margin: 0 10px;
+      }
+      /* Media Query for Mobile */
+      @media screen and (max-width: 600px) {
+        p {
+          width: 90%;
+        }
+        h1 {
+          font-size: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <script>
+      window.location.replace("/");
+    </script> -->
+    <div class="container">
+      <h1>Please enable JavaScript.</h1>
+      <p><strong>JavaScript is required for:</strong></p>
+
+      <p>
+        basic funtions such as detecting operating systems, redirecting,
+        bootstrap & more.
+      </p>
+
+      <p>
+        If you think this an error, please wait for a while. If you have
+        JavaScript enabled in your browser, but you're getting a warning on this
+        site, please make sure you haven't acidentally disabled it on this site
+        in your site permissions.<br />
+      </p>
+      <p><strong>Done?</strong></p>
+      <p>
+        <a href="/">Return to homepage</a>
+        for passmgrgui.
+      </p>
+      <p><strong>Download anyway.</strong></p>
+      <a
+        href="https://github.com/passmgrgui/passmgr/raw/binaries/linux/passmgrgui.zip"
+        >Linux</a
+      >
+      <a
+        href="https://github.com/passmgrgui/passmgr/raw/binaries/macos/passmgrgui.zip"
+        >MacOS</a
+      >
+      <a
+        href="https://github.com/passmgrgui/passmgr/raw/binaries/windows/passmgrguisetup.exe"
+        >Windows <br
+      /></a>
+      <a href="/" class="logo logo-img-1x">
+        <img width="32" height="32" alt="passmgrgui" src="images/icon.webp" />
+      </a>
+    </div>
+  </body>
+</html>

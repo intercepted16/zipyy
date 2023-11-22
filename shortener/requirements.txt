@@ -1,5 +1,8 @@
+setuptools
 flask
 flask_login
 pymysql
 gunicorn
-dotenv
+python_dotenv
+bcrypt
+cryptography

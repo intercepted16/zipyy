@@ -1,35 +1,43 @@
 {% extends "base.html" %} {% block content %}
-<div
-  style="text-align: center"
-  class="d-flex align-items-center justify-content-center flex-column"
->
-  <h1>Login</h1>
-  <form class="needs-validation" id="loginForm" novalidate>
-    <div class="mb-3">
-      <label for="loginEmailInput" class="form-label">Email address</label>
-      <input
-        type="email"
-        class="form-control"
-        id="loginEmailInput"
-        aria-describedby="emailHelp"
-        required
-      />
-      <div class="invalid-feedback">Please enter a valid email address.</div>
+<div class="container mt-5">
+  <div class="container login-container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 login-form">
+        <h2>Login</h2>
+        <form
+          class="needs-validation text-center d-flex flex-column justify-content-center mx-auto"
+          id="loginForm"
+          novalidate
+        >
+          <div class="mb-3">
+            <label for="loginEmailInput`" class="form-label">email:</label>
+            <input
+              type="email"
+              class="form-control"
+              id="loginEmailInput"
+              placeholder="Enter your email"
+            />
+            <div class="invalid-feedback">
+              Please enter a valid email address.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="loginPasswordInput" class="form-label">Password:</label>
+            <input
+              type="password"
+              class="form-control"
+              id="loginPasswordInput"
+              placeholder="Enter your password"
+            />
+            <div class="invalid-feedback">Invalid username or password.</div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
-    <div class="mb-3">
-      <label for="loginPasswordInput" class="form-label">Password</label>
-      <input
-        type="password"
-        class="form-control"
-        id="loginPasswordInput"
-        required
-      />
-      <div class="invalid-feedback">Incorrect password.</div>
-    </div>
-    <button type="submit" id="loginButton" class="btn btn-primary">
-      Login
-    </button>
-  </form>
+  </div>
 </div>
 <script src="static/login.js"></script>
 {% endblock %}
