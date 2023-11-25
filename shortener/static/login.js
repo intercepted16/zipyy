@@ -28,7 +28,6 @@ $("#loginBtn").on("click", async function (e) {
     passwordInput.setCustomValidity("");
   }
 
-  // Update the form validity check after handling the response
   if (!form.checkValidity()) {
     $("#loginForm").addClass("was-validated");
     return 1;

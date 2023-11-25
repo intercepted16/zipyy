@@ -1,60 +1,57 @@
-{% extends "base.html" %} {% block content %}
-<div
-  style="text-align: center"
-  class="d-flex align-items-center justify-content-center flex-column"
->
-  <h1 class="light-text">
-    A
-    <span class="text-primary" style="font-weight: 700">free</span>
-    (as in no limits!) URL shortener.
-  </h1>
-  <p class="larger-text text-success">
-    No account required, and data is not shared.
-  </p>
-  <p style="margin-bottom: 0" class="text-warning fw-bold">Warning:</p>
-  <p class="fst-italic">
-    *Website & data is hosted on an Amazon AWS EC2 instance & URLS are
-    accessible <br />
-    on a MySQL database. Check out the <a href="sourcecode">source code</a> for
-    more information.
-  </p>
-</div>
-
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-md-6">
-      <!-- Left container for URL shortener input with border -->
-      <div id="inputDiv" class="border p-3">
-        <p class="larger-text">Original URL:</p>
-        <form>
-          <label id="enterUrlLabel" for="urlInput">Enter URL:</label>
-          <input
-            type="text"
-            id="urlInput"
-            name="urlInput"
-            class="form-control"
-            placeholder="Paste your URL here"
-            autocomplete="off"
-          />
-          <button class="btn btn-primary mt-2" id="shortenButton">
-            Shorten
-          </button>
-        </form>
-        <a id="originalUrl"></a>
-      </div>
+{% extends "layout.html" %} {% block content %}
+<div style="text-align: center" class="mx-auto">
+  <div class="px-4 my-5 text-center">
+    <img
+      class="d-block mx-auto mb-4"
+      src="static/img/logo.jpeg"
+      alt=""
+      width="100"
+      height="100"
+      style="border-radius: 10px"
+    />
+    <h1 class="display-5 fw-bold text-body-emphasis">
+      A
+      <span class="text-primary">free</span>
+      (free speech) URL shortener.
+    </h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-4">
+        A no junk, simple, private URL shortener you can trust. Bitly, really?
+        <strong>That rhymes.</strong>
+        Unlimited entries & an account is not required. <br />
+        <strong> Bye bye trackers!</strong>
+      </p>
     </div>
-
-    <div class="col-md-6">
-      <!-- Right container for the output div with border -->
-      <div class="output-container border p-3">
-        <div class="output-div">
-          <p class="larger-text">Shortened URL:</p>
-          <a id="shortenedUrl" href=""></a>
-        </div>
-      </div>
-    </div>
+    <p style="margin-bottom: 0" class="text-warning fw-bold">Warning:</p>
+    <p class="fst-italic" style="margin-bottom: 0">
+      *Website & data is hosted on an Amazon AWS EC2 instance & URLS are stored
+      <br />
+      on a MySQL database. Check out the
+      <a href="sourcecode">source code</a> for more information.
+    </p>
+  </div>
+  <div id="inputDiv" class="border p-3 col-6 mx-auto">
+    <span class="larger-text">Enter your URL:</span>
+    <form style="margin-top: 10px">
+      <input
+        type="text"
+        id="urlInput"
+        name="urlInput"
+        class="form-control"
+        placeholder="Paste your URL here"
+        autocomplete="off"
+      />
+      <button
+        class="btn btn-primary mt-2"
+        style="width: 100%"
+        id="shortenButton"
+      >
+        Shorten
+      </button>
+    </form>
   </div>
 </div>
+
 <div
   style="text-align: center"
   id="loggedInDiv"
@@ -99,10 +96,9 @@
             <ul class="dropdown-menu">
               <li>
                 <button
-                  data-bs-toggle="modal"
-                  data-bs-target="#exampleModal"
-                  class="dropdown-item btn btn-warning"
+                  class="dropdown-item btn btn-warning editUrlBtn"
                   data-id="{{ url.id }}"
+                  data-shortened="{{ url.shortened }}"
                 >
                   <i class="bi bi-pencil-square" style="margin-right: 5px"></i>
                   Edit
@@ -110,9 +106,7 @@
               </li>
               <li>
                 <button
-                  class="dropdown-item btn btn-danger"
-                  data-bs-toggle="modal"
-                  data-bs-target="#deleteModal"
+                  class="dropdown-item btn btn-danger deleteUrlTrigger"
                   data-id="{{ url.id }}"
                   data-shortened="{{ url.shortened }}"
                 >
@@ -177,6 +171,48 @@
 
   <div
     class="modal fade"
+    id="deleteAccountModal"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5">Delete Account</h1>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Cancel"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <span class="fw-bold"
+            >Are you sure you want to delete your account? <br />
+          </span>
+          <span class="text-muted"
+            >Deleting your account will also delete all shortened URLS created
+            under this account.</span
+          >
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" id="deleteAccountBtn">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal fade"
     id="deleteModal"
     tabindex="-1"
     aria-labelledby="deleteModalLabel"
@@ -214,5 +250,29 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="urlModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">URL</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <strong>Original: </strong>
+        <a href="" id="originalUrl"></a>
+        <br />
+        <strong>Shortened: </strong>
+        <a href="" id="shortenedUrl"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="static/index.js"></script>
 {% endblock %}

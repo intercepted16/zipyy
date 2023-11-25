@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from logging import FileHandler, WARNING
 import os
 from markupsafe import Markup
 from flask import (
@@ -9,6 +10,7 @@ from flask import (
     abort,
     make_response,
     jsonify,
+    session,
 )
 import random
 import string
@@ -24,10 +26,11 @@ from flask_login import (
     logout_user,
     current_user,
 )
+import re
 
 load_dotenv()
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "your_secret_key"  # Change this to a secure random key
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 login_manager = LoginManager(app)
 login_manager.login_view = "login"  # Specify the login view route
 
@@ -41,31 +44,28 @@ db_config = {
 
 
 def _init():
-    # Create the database if it doesn't exist
     create_database()
 
-    # Create the table if it doesn't exist
     conn = get_connection()
     with conn.cursor() as cur:
-        # Create users table
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 email TEXT,
-                hash TEXT
+                hash TEXT,
+                deleted BOOLEAN DEFAULT FALSE
             )
             """
         )
 
-        # Create urls table
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS urls (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 original TEXT NOT NULL,
                 shortened VARCHAR(%s) NOT NULL,
-                deleted BOOLEAN DEFAULT 0,
+                deleted BOOLEAN DEFAULT FALSE,
                 user_id INT
             )
             """,
@@ -78,7 +78,6 @@ def _init():
 
 
 def get_destination_url(shortened):
-    # Use proper SQL query to retrieve the destination_url based on the path
     conn = get_connection()
     with conn.cursor() as cur:
         cur.execute("SELECT ORIGINAL FROM urls WHERE shortened=%s", (shortened,))
@@ -99,8 +98,8 @@ def get_connection():
 
 def create_database():
     connection = pymysql.connect(**db_config)
-    with connection.cursor() as cursor:
-        cursor.execute("CREATE DATABASE IF NOT EXISTS shortener")
+    with connection.cursor() as cur:
+        cur.execute("CREATE DATABASE IF NOT EXISTS shortener")
     connection.close()
 
 
@@ -131,7 +130,7 @@ class User(UserMixin):
             return urls
 
     def get_id(self):
-        return str(self.user_id)  # Convert to string if the ID is not a string
+        return str(self.user_id)
 
     def _connect_to_database(self):
         try:
@@ -157,36 +156,49 @@ class User(UserMixin):
             return "Error connecting to the database"
 
         try:
-            with self.db_connection.cursor() as cursor:
+            with self.db_connection.cursor() as cur:
                 # Check if the user already exists
-                cursor.execute("SELECT * FROM users WHERE email = %s", (self.user,))
-                existing_user = cursor.fetchone()
+                cur.execute("SELECT * FROM users WHERE email = %s", (self.user,))
+                existing_user = cur.fetchone()
 
                 if existing_user:
-                    return "User already exists"
+                    return 409
 
-                # Create a new user with a hashed password
                 hashed_password = bcrypt.hashpw(
                     self.password.encode(), bcrypt.gensalt()
-                )
-                cursor.execute(
-                    "INSERT INTO users (email, hash) VALUES (%s, %s)",
-                    (self.user, hashed_password.decode("utf-8")),
-                )
-                self.db_connection.commit()
-                user_id = cursor.lastrowid
+                ).decode("utf8")
 
-                # Log in the newly created user
+                try:
+                    cur.execute("SELECT * FROM users ORDER BY id DESC LIMIT 1")
+                    id = cur.fetchone()["id"]
+                    cur.execute("SELECT deleted FROM users WHERE id = %s", id)
+                    if bool(cur.fetchone()["deleted"]):
+                        cur.execute(
+                            "INSERT INTO users (id, email, hash) VALUES (%s, %s, %s)",
+                            (id + 1, self.user, hashed_password),
+                        )
+                        cur.execute("UPDATE users SET deleted = 0 WHERE id = %s", id)
+                    else:
+                        cur.execute(
+                            "INSERT INTO users (email, hash) VALUES (%s, %s)",
+                            (self.user, hashed_password),
+                        )
+                except TypeError:
+                    # First entry
+                    cur.execute(
+                        "INSERT INTO users (id, email, hash) VALUES (1, %s, %s)",
+                        (self.user, hashed_password),
+                    )
+
+                self.db_connection.commit()
+                user_id = cur.lastrowid
+
                 user_obj = User(
                     user_id=user_id, user=self.user, password=hashed_password
                 )
                 login_user(user_obj)
 
                 return f"User created with ID: {user_id}"
-
-        except pymysql.Error as e:
-            print(f"Error: {e}")
-            return "Error creating user"
 
         finally:
             self._close_database_connection()
@@ -196,10 +208,10 @@ class User(UserMixin):
             return "Error connecting to the database"
 
         try:
-            with self.db_connection.cursor() as cursor:
+            with self.db_connection.cursor() as cur:
                 # Check if the user exists
-                cursor.execute("SELECT * FROM users WHERE email = %s", (self.user,))
-                user = cursor.fetchone()
+                cur.execute("SELECT * FROM users WHERE email = %s", (self.user,))
+                user = cur.fetchone()
                 print(f"Logging in: {self.user}, {self.password}")
 
                 if not user:
@@ -226,10 +238,25 @@ class User(UserMixin):
         finally:
             self._close_database_connection()
 
-    def logout(self):
-        # Check if the user is logged in and perform logout actions (session log-file, not implemented here)
-        # Your implementation for logout goes here
-        return "Logout successful"
+    def delete_account(self):
+        if not self._connect_to_database():
+            return "Error connecting to the database"
+
+        """Create a database connection, and execute a query to remove the row from the users table where the
+        user ID is equal to the current user's ID."""
+        with self.db_connection.cursor() as cur:
+            print(f"Deleting: {self.user_id}")
+            if self.user_id != 1:
+                cur.execute(
+                    "UPDATE users SET deleted = 1 WHERE id = %s", int(self.user_id) - 1
+                )
+            cur.execute("DELETE FROM users WHERE id = %s", self.user_id)
+            """"Delete the row(s) from the users table where the user ID is equal to the current users ID."""
+            cur.execute("DELETE FROM urls WHERE user_id = %s", self.user_id)
+
+        # Commit changes to the database
+        self.db_connection.commit()
+        self._close_database_connection()
 
 
 @login_manager.user_loader

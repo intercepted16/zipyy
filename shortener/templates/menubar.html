@@ -21,7 +21,43 @@
           <a class="nav-link" href="sourcecode">Source Code</a>
         </li>
       </ul>
-      <span id="accountEmailSpan"></span>
+      <div id="menubarAccountDiv" class="d-none align-items-center">
+        <div class="dropdown" style="margin-left: 10px">
+          <button
+            class="btn btn-primary"
+            id="settingsBtn"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <i class="bi bi-gear"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <button
+                class="dropdown-item btn btn-success"
+                id="logoutBtn"
+                data-id="{{ url.id }}"
+              >
+                <i class="bi bi-box-arrow-left" style="margin-right: 5px"></i>
+                Log Out
+              </button>
+            </li>
+            <li>
+              <button
+                class="dropdown-item btn btn-danger"
+                data-bs-target="#deleteAccountModal"
+                data-bs-toggle="modal"
+                data-id="{{ url.id }}"
+                data-shortened="{{ url.shortened }}"
+              >
+                <i class="bi bi-trash" style="margin-right: 5px"></i>
+                Delete Account
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
       <ul class="navbar-nav me-auto3 mb-lg-0 d-flex">
         <li class="nav-item">
           <button

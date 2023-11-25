@@ -1,5 +1,10 @@
 from init import *
 
+ERRORS = [
+    "INVALID_EMAIL",
+    "INSECURE_PASSWORD",
+]
+
 
 @app.route("/")
 def index():
@@ -30,12 +35,11 @@ def _redirect(shortened):
     )
 
 
-@app.route("/add")
+@app.route("/add", methods=["POST"])
 def add():
-    url = request.args.get("url")
+    url = request.json["url"]
     ran_id = ""
-
-    if url is not None and url != "":
+    if url is not None and url != "" and isValidUrl(url):
         conn = get_connection()
         with conn.cursor() as cur:
             while (
@@ -63,7 +67,6 @@ def add():
                     )
                     cur.execute("UPDATE urls SET deleted = 0 WHERE id = %s", id)
                 else:
-                    print("not deleted above it")
                     cur.execute(
                         "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
                         (url, ran_id, current_user.get_id()),
@@ -71,31 +74,14 @@ def add():
             except TypeError:
                 # First entry
                 cur.execute(
-                    "INSERT INTO urls (ORIGINAL, shortened, user_id) VALUES (%s, %s, %s)",
+                    "INSERT INTO urls (id, original, shortened, user_id) VALUES (1, %s, %s, %s)",
                     (url, ran_id, current_user.get_id()),
                 )
             conn.commit()
         conn.close()
-    return ran_id
-
-
-@app.route("/cookie", methods=["POST"])
-def add_cookies():
-    data = request.json
-    # Get the values of 'key' and 'value' from the POST request
-    key = data["key"]
-    value = data["value"]
-    # Check if both 'key' and 'value' are present in the request
-    if key is None or value is None:
-        return "400"
-
-    # Create a response object
-    response = make_response("200")
-    expiration_time = datetime.datetime.now() + datetime.timedelta(weeks=2)
-    # Add the cookies to the response
-    response.set_cookie(key, value, expires=expiration_time)
-
-    return response
+        return ran_id
+    else:
+        abort(400)
 
 
 @app.errorhandler(404)
@@ -103,13 +89,15 @@ def page_not_found(e):
     return render_template("404.html"), 404
 
 
-@app.route("/get")
-def get():
-    path = request.args.get("path")
-    if path is not None and path != "" and os.path.exists(path):
-        with open(path, "r") as file:
-            return file.read()
-    return "404"
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
+
+@app.route("/menubar", methods=["POST"])
+def menubar():
+    with open(MENUBAR_PATH, "r") as file:
+        return file.read()
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -118,10 +106,19 @@ def signup():
         data = request.json
         email = data["email"]
         password = data["password"]
-        print(email, password)
+        if not is_valid_email(email) and not is_secure_password(password):
+            return make_response(jsonify({"error": "ALL_INVALID"}), 400)
+        if not is_valid_email(email):
+            return make_response(jsonify({"error": "INVALID_EMAIL"}), 400)
+        elif not is_secure_password(password):
+            return make_response(jsonify({"error": "INSECURE_PASSWORD"}), 400)
+
         """Create an user object & call the signup method."""
         user = User(user=email, password=password)
-        user.signup()
+        status = user.signup()
+        if status == 409:
+            abort(409)
+        user.login()
         return "200"
     else:
         return render_template("signup.html")
@@ -179,7 +176,8 @@ def edit():
     data = request.json
     id = data["id"]
     modify = data["modified"]
-    print(id, modify)
+    if not isValidUrl(modify):
+        abort(400)
     conn = get_connection()
     with conn.cursor() as cur:
         cur.execute("USE shortener")
@@ -200,6 +198,50 @@ def source_code():
 @app.route("/noscript")
 def no_script():
     return render_template("noscript.html")
+
+
+@app.route("/deleteaccount", methods=["POST"])
+def delete_account():
+    current_user.delete_account()
+    return "200"
+
+
+def isValidUrl(url):
+    urlPattern = r"^((https?:)?\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.\-&%+\?=]*)*\/?$"
+    ipPattern = r"^((https?:)?\/\/)?((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}))([/\w.\-&%+\?=]*)*\/?$"
+    return re.match(urlPattern, url) or re.match(ipPattern, url)
+
+
+def is_valid_email(email):
+    # Define the regular expression pattern for a simple email validation
+    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+
+    # Use re.match to check if the email matches the pattern
+    match = re.match(pattern, email)
+
+    # If there is a match, return True, otherwise return False
+    return bool(match)
+
+
+def is_secure_password(password):
+    # Ensure the password is at least 8 characters long
+    if len(password) < 8:
+        return False
+
+    # Ensure the password contains at least one symbol
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+
+    # Ensure the password contains at least two numbers
+    if not re.search(r"\d.*\d", password):
+        return False
+
+    # Ensure the password contains at least three letters
+    if not re.search(r"[a-zA-Z].*[a-zA-Z].*[a-zA-Z]", password):
+        return False
+
+    # If all conditions are met, the password is considered secure
+    return True
 
 
 if __name__ == "__main__":
