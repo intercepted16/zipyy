@@ -30,7 +30,7 @@ $(document).ready(function () {
       $("#shortenedUrl")
         .attr("href", `http://${window.location.hostname}/${id}`)
         .html(`${window.location.hostname}/${id}`);
-      truncateText("originalUrl", 25);
+      truncateText("#originalUrl", 25);
     }
   });
 
