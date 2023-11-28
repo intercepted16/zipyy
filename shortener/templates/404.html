@@ -5,11 +5,23 @@
     <title>Page not found</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css" media="screen">
-      body {
-        margin: 0;
-        background-color: #212529;
-        color: #dee2e6;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    @media (prefers-color-scheme: light) {
+        body {
+          background-color: #dee2e6;
+          color: #000000;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+        }
+        body {
+          background-color: #212529;
+          color: #dee2e6;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
       }
 
       .container {
@@ -101,7 +113,7 @@
       </div>
 
       <a href="/" class="logo logo-img-1x">
-        <img width="64" height="64" alt="Shortly" src="static/img/logo.webp" style="border-radius: 16px;" />
+        <img width="64" height="64" alt="Shortly" src="/static/img/logo.webp" style="border-radius: 16px;" />
       </a>
     </div>
   </body>
