@@ -112,7 +112,7 @@ def signup():
         user = User(user=email, password=password)
         status = user.signup()
         if status == 409:
-            abort(409)
+            return make_response(jsonify({"error": "USER_ALREADY_EXISTS"}), 409)
         user.login()
         return "200"
     else:
