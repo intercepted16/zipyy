@@ -124,7 +124,6 @@ $(document).ready(function () {
             window.location.replace("/");
             return 1;
           }
-          console.log("User is logged in");
           $("#loginNav")
             .text("Logout")
             .on("click", function (e) {
@@ -144,7 +143,6 @@ $(document).ready(function () {
             $("#loggedInDiv").attr("style", "display: flex !important");
           }
         } else {
-          console.log("User is not logged in");
           $("#loginNav").on("click", function () {
             window.location.href = "login";
           });

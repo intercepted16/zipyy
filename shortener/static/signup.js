@@ -17,11 +17,7 @@ $("#signupBtn").on("click", async function (e) {
     }),
   });
   const responseBody = await response.json();
-  alert(response.status);
-  alert(responseBody);
   if (response.status == 400) {
-    alert("WOOWOWOWKWNJ");
-    console.log(responseBody["error"]);
     if (responseBody["error"] == "INVALID_EMAIL") {
       emailInput[0].setCustomValidity("Invalid email.");
       emailInput.next().html("Please enter a valid email address.");
@@ -37,13 +33,11 @@ $("#signupBtn").on("click", async function (e) {
       );
     }
   } else if (response.status == 409) {
-    alert("409");
     emailInput[0].setCustomValidity("User already exists.");
     emailInput
       .next()
       .html("User already exists. Please try again with a different email.");
   } else {
-    console.log(response.status);
     window.location.replace("/");
   }
 
