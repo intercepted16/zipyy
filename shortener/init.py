@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from logging import FileHandler, WARNING
 import os
 from markupsafe import Markup
 from flask import (
