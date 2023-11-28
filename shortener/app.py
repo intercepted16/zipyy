@@ -1,21 +1,5 @@
 from init import *
 
-ERRORS = [
-    "INVALID_EMAIL",
-    "INSECURE_PASSWORD",
-]
-
-
-@app.before_request
-def redirect_to_new_domain():
-    if request.host != DOMAIN_NAME:
-        new_url = f"http://{DOMAIN_NAME}{request.path}"
-        if request.query_string:
-            new_url += f"?{request.query_string.decode()}"
-
-        # Redirect to the new domain
-        return redirect(new_url, code=301)
-
 
 @app.route("/")
 def index():
