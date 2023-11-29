@@ -1,5 +1,6 @@
 from init import *
 
+_init()
 
 @app.route("/<path:shortened>")
 def redirect_(shortened):
