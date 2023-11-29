@@ -49,7 +49,7 @@ $(document).ready(function () {
     button.on("click", function () {
       const textContent = $(this).closest("tr").find("td:eq(1)").text();
       navigator.clipboard.writeText(
-        `${window.location.hostname}/${textContent}`
+        `${shortenedUrlsDomainName}/${textContent}`
       );
     });
   });
