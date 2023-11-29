@@ -28,8 +28,8 @@ $(document).ready(function () {
       originalUrl.text(cleanedUrl);
 
       $("#shortenedUrl")
-        .attr("href", `http://${window.location.hostname}/${id}`)
-        .html(`${window.location.hostname}/${id}`);
+        .attr("href", `http://${shortenedUrlsDomainName}/${id}`)
+        .html(`${shortenedUrlsDomainName}/${id}`);
       truncateText("#originalUrl", 25);
     }
   });
