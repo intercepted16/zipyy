@@ -27,24 +27,22 @@ from flask_login import (
 )
 import re
 
+load_dotenv()
+app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+login_manager = LoginManager(app)
+login_manager.login_view = "login"  # Specify the login view route
 
-global app
-global login_manager 
+
+db_config = {
+    "host": DATABASE_HOST,
+    "port": DATABASE_PORT,
+    "user": DATABASE_ROOT_USERNAME,
+    "password": os.getenv("DATABASE_ROOT_PASSWORD"),
+}
+
 
 def _init():
-    load_dotenv()
-    app = Flask(__name__)
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-    login_manager = LoginManager(app)
-    login_manager.login_view = "login"  # Specify the login view route
-
-    db_config = {
-        "host": DATABASE_HOST,
-        "port": DATABASE_PORT,
-        "user": DATABASE_ROOT_USERNAME,
-        "password": os.getenv("DATABASE_ROOT_PASSWORD"),
-    }
-
     create_database()
 
     conn = get_connection()
@@ -76,10 +74,6 @@ def _init():
         conn.commit()
 
     conn.close()
-    @login_manager.user_loader
-    def load_user(user_id):
-        # This function is required by Flask-Login to reload a user from the user_id stored in the session
-        return User(user_id=user_id)
 
 
 def get_destination_url(shortened):
@@ -262,3 +256,12 @@ class User(UserMixin):
         # Commit changes to the database
         self.db_connection.commit()
         self._close_database_connection()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # This function is required by Flask-Login to reload a user from the user_id stored in the session
+    return User(user_id=user_id)
+
+
+_init()
