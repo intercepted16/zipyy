@@ -143,7 +143,6 @@ class User(UserMixin):
             )
             return True
         except pymysql.Error as e:
-            print(f"Error: {e}")
             return False
 
     def _close_database_connection(self):
@@ -211,7 +210,6 @@ class User(UserMixin):
                 # Check if the user exists
                 cur.execute("SELECT * FROM users WHERE email = %s", (self.user,))
                 user = cur.fetchone()
-                print(f"Logging in: {self.user}, {self.password}")
 
                 if not user:
                     return "401"
@@ -231,7 +229,6 @@ class User(UserMixin):
                 return "200"
 
         except pymysql.Error as e:
-            print(f"Error: {e}")
             return "Error during login"
 
         finally:
@@ -244,7 +241,6 @@ class User(UserMixin):
         """Create a database connection, and execute a query to remove the row from the users table where the
         user ID is equal to the current user's ID."""
         with self.db_connection.cursor() as cur:
-            print(f"Deleting: {self.user_id}")
             if self.user_id != 1:
                 cur.execute(
                     "UPDATE users SET deleted = 1 WHERE id = %s", int(self.user_id) - 1
