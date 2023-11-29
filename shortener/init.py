@@ -29,10 +29,9 @@ import re
 
 
 global app
-global login_manager
+global login_manager 
 
-
-def init_():
+def _init():
     load_dotenv()
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -77,7 +76,6 @@ def init_():
         conn.commit()
 
     conn.close()
-
     @login_manager.user_loader
     def load_user(user_id):
         # This function is required by Flask-Login to reload a user from the user_id stored in the session
