@@ -51,17 +51,17 @@ nav {
   width: 50vw;
 }
 
-.login-container {
+.login-container .contact-container {
   margin-top: 5%;
 }
 
-.login-form {
+.login-form .contact-container {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(221, 212, 212, 0.1);
 }
 
-.login-form h2 {
+.login-form h2 .contact-form h2 {
   text-align: center;
   margin-bottom: 20px;
 }
