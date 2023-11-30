@@ -61,10 +61,12 @@ nav {
   box-shadow: 0px 0px 10px rgba(221, 212, 212, 0.1);
 }
 
-.login-form h2 .contact-form h2 {
+.login-form h2,
+.contact-form h2 {
   text-align: center;
   margin-bottom: 20px;
 }
+
 
 .bd-placeholder-img {
   font-size: 1.125rem;
