@@ -12,4 +12,4 @@ def _redirect(shortened):
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect("https://shortly.duckdns.org/")
+    return redirect(DOMAIN_NAME)
