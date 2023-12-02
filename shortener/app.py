@@ -79,9 +79,9 @@ def contact():
     return render_template("contact.html")
 
 
-@app.route("/menubar", methods=["POST"])
-def menubar():
-    with open(MENUBAR_PATH, "r") as file:
+@app.route("/nav", methods=["POST"])
+def nav():
+    with open(NAV_PATH, "r") as file:
         return file.read()
 
 

@@ -1,4 +1,4 @@
-const shortenedUrlsDomainName = "sh.ps.ai"
+const shortenedUrlsDomainName = "sh.ps.ai";
 const getStoredTheme = () => localStorage.getItem("theme");
 const setStoredTheme = (theme) => localStorage.setItem("theme", theme);
 
@@ -18,40 +18,35 @@ const setTheme = (theme) => {
     theme === "auto" &&
     window.matchMedia("(prefers-color-scheme: dark)").matches
   ) {
-    document.documentElement.setAttribute("data-bs-theme", "dark");
+    $("html").attr("data-bs-theme", "dark");
   } else {
-    document.documentElement.setAttribute("data-bs-theme", theme);
+    $("html").attr("data-bs-theme", theme);
   }
 };
 
 setTheme(getPreferredTheme());
 
 const showActiveTheme = (theme, focus = false) => {
-  const themeSwitcher = document.querySelector("#bd-theme");
+  const themeSwitcher = $("#bd-theme");
 
-  if (!themeSwitcher) {
+  if (!themeSwitcher.length) {
     return;
   }
 
-  const themeSwitcherText = document.querySelector("#bd-theme-text");
-  const activeThemeIcon = document.querySelector(".theme-icon-active use");
-  const btnToActive = document.querySelector(
-    `[data-bs-theme-value="${theme}"]`
-  );
-  const svgOfActiveBtn = btnToActive
-    .querySelector("svg use")
-    .getAttribute("href");
+  const themeSwitcherText = $("#bd-theme-text");
+  const activeThemeIcon = $(".theme-icon-active use");
+  const btnToActive = $(`[data-bs-theme-value="${theme}"]`);
+  const svgOfActiveBtn = btnToActive.find("svg use").attr("href");
 
-  document.querySelectorAll("[data-bs-theme-value]").forEach((element) => {
-    element.classList.remove("active");
-    element.setAttribute("aria-pressed", "false");
-  });
-
-  btnToActive.classList.add("active");
-  btnToActive.setAttribute("aria-pressed", "true");
-  activeThemeIcon.setAttribute("href", svgOfActiveBtn);
-  const themeSwitcherLabel = `${themeSwitcherText.textContent} (${btnToActive.dataset.bsThemeValue})`;
-  themeSwitcher.setAttribute("aria-label", themeSwitcherLabel);
+  $("[data-bs-theme-value]")
+    .removeClass("active")
+    .attr("aria-pressed", "false");
+  btnToActive.addClass("active").attr("aria-pressed", "true");
+  activeThemeIcon.attr("href", svgOfActiveBtn);
+  const themeSwitcherLabel = `${themeSwitcherText.text()} (${btnToActive.data(
+    "bs-theme-value"
+  )})`;
+  themeSwitcher.attr("aria-label", themeSwitcherLabel);
 
   if (focus) {
     themeSwitcher.focus();
@@ -66,98 +61,64 @@ window
       setTheme(getPreferredTheme());
     }
   });
+showActiveTheme(getPreferredTheme());
 
-window.addEventListener("DOMContentLoaded", () => {
-  showActiveTheme(getPreferredTheme());
-
-  document.querySelectorAll("[data-bs-theme-value]").forEach((toggle) => {
-    toggle.addEventListener("click", () => {
-      const theme = toggle.getAttribute("data-bs-theme-value");
-      setStoredTheme(theme);
-      setTheme(theme);
-      showActiveTheme(theme, true);
-    });
-  });
+$("[data-bs-theme-value]").on("click", function () {
+  const theme = $(this).data("bs-theme-value");
+  setStoredTheme(theme);
+  setTheme(theme);
+  showActiveTheme(theme, true);
 });
 
-$(document).ready(function () {
+$(document).ready(async function () {
+  $(".loggedInElement").addClass("d-none");
   let path = window.location.pathname;
-  let page = path.split("/").pop().trim();
+  await checkLoginStatus();
+  $("nav").removeClass("d-none");
+  $("main").removeClass("d-none");
 
-  fetch("menubar", {
-    method: "POST",
-  })
-    .then((response) => response.text())
-    .then(function (data) {
-      let tempDiv = $("<div>").html(data);
-
-      let navElement = tempDiv.find("nav");
-
-      if (navElement.length) {
-        $("body").prepend(navElement);
-      }
-      checkLoginStatus();
-      $("nav").css({
-        display: "block",
-      });
-
-      $("main").css("display", "block");
-    })
-    .catch(function (error) {
-      console.error("Error fetching menubar.html:", error);
-    });
-
-  function checkLoginStatus() {
-    fetch("userdata", {
+  async function checkLoginStatus() {
+    const response = await fetch("userdata", {
       method: "POST",
-    })
-      .then((response) => response.json())
-      .then(function (data) {
-        if (data["logged_in"] == true) {
-          if (data["email"] == null) {
-            fetch("logout", {
-              method: "POST",
-            });
-            window.location.reload();
-            return 1;
-          }
-          if (page.endsWith("login") || page.endsWith("signup")) {
-            window.location.replace("/");
-            return 1;
-          }
-          $("#loginNav")
-            .text("Logout")
-            .on("click", function (e) {
-              e.preventDefault();
-              fetch("logout", {
-                method: "POST",
-              });
-              window.location.reload();
-            });
-          $("#signupNav").css("display", "none");
-          $("#menubarAccountDiv").removeClass("d-none").addClass("d-flex");
-          $("#menubarAccountDiv").html(
-            data["email"] + $("#menubarAccountDiv").html()
-          );
-          $("#emailLogoutLine").css("display", "block");
-          if (page.endsWith("")) {
-            $("#loggedInDiv").attr("style", "display: flex !important");
-          }
-        } else {
-          $("#loginNav").on("click", function () {
-            window.location.href = "login";
+    });
+    const data = await response.json();
+    if (data["logged_in"] == true) {
+      if (data["email"] == null) {
+        fetch("logout", {
+          method: "POST",
+        });
+        window.location.reload();
+        return 1;
+      }
+      if (path == "/login" || path == "/signup") {
+        window.location.replace("/");
+        return 1;
+      }
+      $("#toggleAuthBtn")
+        .text("Logout")
+        .on("click", function (e) {
+          e.preventDefault();
+          fetch("logout", {
+            method: "POST",
           });
-          $("#signupNav")
-            .css("display", "block")
-            .on("click", function () {
-              window.location.href = "signup";
-            });
+          window.location.reload();
+        });
+      $("#navAccountDiv").html(data["email"] + $("#navAccountDiv").html());
+      $(".loggedOutElement").addClass("d-none");
+      $(".loggedInElement").removeClass("d-none");
+    } else {
+      $("#toggleAuthBtn").on("click", function () {
+        if (path != "/login") {
+          window.location.href = "login";
         }
-        addEventListeners();
-      })
-      .catch(function (error) {
-        console.error("Error fetching userdata:", error);
       });
+      $("#signupNav").on("click", function () {
+        if (path != "/signup") {
+          window.location.href = "signup";
+        }
+      });
+    }
+    addEventListeners();
   }
 });
 

@@ -10,6 +10,7 @@ def _redirect(shortened):
         else abort(404)
     )
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(f"https://{DOMAIN_NAME}")

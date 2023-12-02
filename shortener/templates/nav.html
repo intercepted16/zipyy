@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+<nav class="d-none navbar navbar-expand-lg bg-body-tertiary sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Shortly</a>
     <button
@@ -21,7 +21,7 @@
           <a class="nav-link" href="sourcecode">Source Code</a>
         </li>
       </ul>
-      <div id="menubarAccountDiv" class="d-none align-items-center">
+      <div class="loggedInElement d-flex align-items-center" id="navAccountDiv">
         <div class="dropdown" style="margin-left: 10px">
           <button
             class="btn btn-primary"
@@ -34,11 +34,7 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <button
-                class="dropdown-item btn btn-success"
-                id="logoutBtn"
-                data-id="{{ url.id }}"
-              >
+              <button class="dropdown-item btn btn-success" id="logoutBtn">
                 <i class="bi bi-box-arrow-left" style="margin-right: 5px"></i>
                 Log Out
               </button>
@@ -48,8 +44,6 @@
                 class="dropdown-item btn btn-danger"
                 data-bs-target="#deleteAccountModal"
                 data-bs-toggle="modal"
-                data-id="{{ url.id }}"
-                data-shortened="{{ url.shortened }}"
               >
                 <i class="bi bi-trash" style="margin-right: 5px"></i>
                 Delete Account
@@ -61,7 +55,7 @@
       <ul class="navbar-nav me-auto3 mb-lg-0 d-flex">
         <li class="nav-item">
           <button
-            class="btn btn-secondary"
+            class="btn btn-secondary loggedOutElement"
             style="margin-left: 10px"
             id="signupNav"
             href="about:blank"
@@ -69,13 +63,12 @@
             Signup
           </button>
         </li>
-        <div class="vr" id="emailLogoutLine"></div>
+        <div class="vr loggedInElement"></div>
         <li class="nav-item">
           <button
             class="btn btn-secondary"
             style="margin-left: 10px"
-            id="loginNav"
-            href="about:blank"
+            id="toggleAuthBtn"
           >
             Login
           </button>

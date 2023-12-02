@@ -1,5 +1,4 @@
 main {
-  display: none;
   overflow-wrap: break-word;
 }
 
@@ -18,37 +17,29 @@ main {
 }
 
 @media only screen and (max-width: 992px) {
-  #emailLogoutLine {
+  .vr {
     display: none !important;
   }
   #signupNav {
     margin-left: 0px !important;
   }
-  #loginNav {
+  #toggleAuthBtn {
     margin-top: 10px;
     margin-left: 0px !important;
   }
-}
-
-#loggedInDiv {
-  display: none !important;
-}
-
-#emailLogoutLine {
-  display: none;
 }
 
 #menubarAccountDiv {
   margin-right: 10px;
 }
 
-nav {
-  display: none;
-}
-
 #urlsTable {
   margin-top: 20px;
   width: 50vw;
+}
+
+#settingsBtn {
+  margin-right: 10px;
 }
 
 .login-container .contact-container {

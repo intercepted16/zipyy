@@ -55,8 +55,7 @@
 
 <div
   style="text-align: center"
-  id="loggedInDiv"
-  class="d-flex align-items-center justify-content-center flex-column"
+  class="loggedInElement align-items-center justify-content-center flex-column d-flex"
 >
   {% if urls is not none %}
   <table class="table table-bordered table-hover" id="urlsTable">
@@ -124,7 +123,9 @@
   </table>
 
   {% endif %}
-  <!-- Modal -->
+</div>
+
+<!-- Modal -->
   <div
     class="modal fade"
     id="exampleModal"
@@ -273,7 +274,7 @@
       </div>
     </div>
   </div>
-</div>
-
+{% endblock %}
+{% block src %}
 <script src="static/index.js"></script>
 {% endblock %}
