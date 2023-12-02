@@ -69,14 +69,14 @@
     </thead>
     <tbody>
       {% for url in urls %}
-      <tr data-href="https://example.com/user/1">
+      <tr>
         <td class="align-middle">{{ url.original }}</td>
         <td class="align-middle">{{ url.shortened }}</td>
         <td class="d-flex justify-content-between">
           <!-- Add the copy & edit button using Font Awesome icons -->
           <div class="btn-group align-middle">
             <button
-              class="btn btn-sm btn-primary copy-button rounded-3"
+              class="btn btn-sm btn-primary rounded-3"
               style="margin-right: 10px"
               data-original="{{ url.original }}"
               data-shortened="{{ url.shortened }}"
