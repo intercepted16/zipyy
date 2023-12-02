@@ -106,6 +106,8 @@ def signup():
         user.login()
         return "200"
     else:
+        if current_user.is_authenticated:
+            return redirect("/")
         return render_template("signup.html")
 
 
@@ -119,6 +121,8 @@ def login():
         user = User(user=email, password=password)
         return user.login()
     else:
+        if current_user.is_authenticated:
+            return redirect("/")
         return render_template("login.html")
 
 
