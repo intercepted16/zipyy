@@ -83,10 +83,10 @@ $(document).ready(function () {
   });
   $(".editUrlBtn").each(function () {
     $(this).on("click", function () {
-      $("#exampleModal").modal("show");
+      $("#editModal").modal("show");
       const id = $(this).data("id");
       const shortened = $(this).data("shortened");
-      $("#exampleModal").attr("data-id", id);
+      $("#editModal").attr("data-id", id);
       $("#editUrlLabel").text(`Editing URL ${shortened}`);
       $("#editUrlChangesBtn").on("click", async function () {
         if (
