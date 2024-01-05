@@ -1,7 +1,56 @@
 from init import *
 
 
-@app.route("/")
+@api.route("/test")
+def test():
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("USE shortener")
+        urls = []
+        user_id = current_user.get_id()
+        if user_id is not None:
+            cur.execute(
+                "SELECT original, shortened, id FROM urls WHERE user_id = %s",
+                user_id,
+            )
+            rows = cur.fetchall()
+            for row in rows:
+                urls.append({"original": row[0], "shortened": row[1], "id": row[2]})
+    conn.close()
+    return render_template("test.html", urls=urls if urls else None)
+
+
+@api.route("/urls")
+def urls():
+    conn = get_connection()
+    with conn.cursor() as cur:
+        cur.execute("USE shortener")
+        urls = []
+        user_id = current_user.get_id()
+        if user_id is not None:
+            cur.execute(
+                "SELECT original, shortened, id FROM urls WHERE user_id = %s",
+                user_id,
+            )
+            rows = cur.fetchall()
+            for row in rows:
+                urls.append({"original": row[0], "shortened": row[1], "id": row[2]})
+    conn.close()
+    print(urls)
+    return jsonify({"entries": urls})
+
+
+@api.route("/login2")
+def login2():
+    return render_template("login2.html")
+
+
+@api.route("/signup2")
+def signup2():
+    return render_template("signup2.html")
+
+
+@api.route("/")
 def index():
     conn = get_connection()
     with conn.cursor() as cur:
@@ -20,7 +69,7 @@ def index():
     return render_template("index.html", urls=urls if urls else None)
 
 
-@app.route("/add", methods=["POST"])
+@api.route("/add", methods=["POST"])
 def add():
     url = request.json["url"]
     ran_id = ""
@@ -64,7 +113,7 @@ def add():
                 )
             conn.commit()
         conn.close()
-        return ran_id
+        return jsonify({"shortened": ran_id})
     else:
         abort(400)
 
@@ -74,18 +123,18 @@ def page_not_found(e):
     return render_template("404.html"), 404
 
 
-@app.route("/contact")
+@api.route("/contact")
 def contact():
     return render_template("contact.html")
 
 
-@app.route("/nav", methods=["POST"])
+@api.route("/nav", methods=["POST"])
 def nav():
     with open(NAV_PATH, "r") as file:
         return file.read()
 
 
-@app.route("/signup", methods=["GET", "POST"])
+@api.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         data = request.json
@@ -111,7 +160,7 @@ def signup():
         return render_template("signup.html")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@api.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         data = request.json
@@ -119,15 +168,16 @@ def login():
         password = data["password"]
         """Create a user object & call the login method."""
         user = User(user=email, password=password)
-        return user.login()
+        return make_response("", user.login())
     else:
         if current_user.is_authenticated:
             return redirect("/")
         return render_template("login.html")
 
 
-@app.route("/userdata", methods=["GET", "POST"])
+@api.route("/userdata", methods=["GET", "POST"])
 def logged_in():
+    print(current_user.is_authenticated)
     if not current_user.is_authenticated:
         return jsonify({"logged_in": False, "user_id": None, "email": None})
     return jsonify(
@@ -140,13 +190,13 @@ def logged_in():
     )
 
 
-@app.route("/logout", methods=["POST"])
+@api.route("/logout", methods=["POST"])
 def logout():
     logout_user()
     return "200"
 
 
-@app.route("/delete", methods=["POST"])
+@api.route("/delete", methods=["POST"])
 def delete():
     id = request.json["id"]
     conn = get_connection()
@@ -160,7 +210,7 @@ def delete():
     return "200"
 
 
-@app.route("/edit", methods=["POST"])
+@api.route("/edit", methods=["POST"])
 def edit():
     data = request.json
     id = data["id"]
@@ -179,37 +229,38 @@ def edit():
     return "200"
 
 
-@app.route("/sourcecode")
+@api.route("/sourcecode")
 def source_code():
     return redirect("https://github.com/passmgrgui/Shortly")
 
 
-@app.route("/noscript")
+@api.route("/noscript")
 def no_script():
     return render_template("noscript.html")
 
 
-@app.route("/deleteaccount", methods=["POST"])
+@api.route("/deleteaccount", methods=["DELETE"])
 def delete_account():
     current_user.delete_account()
     return "200"
 
 
+@api.route("/contact2")
+def contact2():
+    return render_template("contact2.html")
+
+
 def isValidUrl(url):
-    urlPattern = r"^((https?:)?\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.\-&%+\?=]*)*\/?$"
-    ipPattern = r"^((https?:)?\/\/)?((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}))([/\w.\-&%+\?=]*)*\/?$"
-    return re.match(urlPattern, url) or re.match(ipPattern, url)
+    url_pattern = r"^((https?:)?\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.\-&%+\?=]*)*\/?$"
+    ip_pattern = r"^((https?:)?\/\/)?((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4}){7}))([/\w.\-&%+\?=]*)*\/?$"
+    return re.match(url_pattern, url, re.IGNORECASE) or re.match(
+        ip_pattern, url, re.IGNORECASE
+    )
 
 
 def is_valid_email(email):
-    # Define the regular expression pattern for a simple email validation
-    pattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-
-    # Use re.match to check if the email matches the pattern
-    match = re.match(pattern, email)
-
-    # If there is a match, return True, otherwise return False
-    return bool(match)
+    email_pattern = r"^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    return re.match(email_pattern, email, re.IGNORECASE)
 
 
 def is_secure_password(password):
@@ -233,5 +284,7 @@ def is_secure_password(password):
     return True
 
 
+app.register_blueprint(api)
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

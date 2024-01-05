@@ -1,0 +1,222 @@
+<script lang="ts">
+  import { onMount } from "svelte";
+  import { logoutModal, deleteAccountModal, userData } from "./store";
+  import {
+    Modal,
+    Button,
+    Dropdown,
+    DropdownDivider,
+    DropdownHeader,
+    DropdownItem,
+    A,
+  } from "flowbite-svelte";
+  import DeleteAccountModal from "../lib/components/DeleteAccountModal.svelte";
+  import LogoutModal from "../lib/components/LogoutModal.svelte";
+  import { loginModal } from "./store";
+  import { goto } from "$app/navigation";
+</script>
+
+<header class="relative sticky top-0 z-20 py-3 md:py-5 bg-blue blur-filter">
+  <div class="max-w-6xl px-4 mx-auto sm:px-6">
+    <div class="flex items-center justify-between h-10">
+      <div>
+        <a
+          class="block"
+          href="https://cruip.com/"
+          rel="home"
+          style="outline: none"
+        >
+          <span class="sr-only">Cruip</span><svg
+            width="28"
+            height="28"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g fill="none" fill-rule="evenodd">
+              <path d="M28 14a3.5 3.5 0 10-7 0 3.5 3.5 0 007 0" fill="#34D399"
+              ></path>
+              <path
+                d="M23.865 23.9a13.932 13.932 0 01-6.377 3.66c-1.115.286-2.284.44-3.488.44a13.893 13.893 0 01-10.512-4.797A13.968 13.968 0 01.048 14c0-3.523 1.298-6.742 3.44-9.203A13.893 13.893 0 0114 0c1.204 0 2.373.154 3.488.44a13.932 13.932 0 016.377 3.66l-4.933 4.95A6.942 6.942 0 0014 7c-3.852 0-6.976 3.134-6.976 7l.002.18C7.122 17.964 10.208 21 14 21c1.926 0 3.67-.784 4.932-2.05l4.933 4.95z"
+                fill="#6366F1"
+                fill-rule="nonzero"
+              ></path>
+            </g>
+          </svg>
+        </a>
+      </div>
+      <div class="inline-flex items-center">
+        <nav class="hidden md:flex md:grow">
+          <ul class="flex flex-wrap items-center justify-end text-sm grow">
+            <li class="ml-8 border-slate-200">
+              <a
+                href="/contact"
+                class="block font-semibold text-slate-800 hover:underline py-0.5"
+                style="outline: none">Contact</a
+              >
+            </li>
+            <li class="pl-6 ml-6 border-l border-slate-200">
+              <a
+                class="block font-semibold text-indigo-500 hover:underline py-0.5 mr-5"
+                href="https://cruip.com/login/"
+                style="outline: none">Source Code</a
+              >
+            </li>
+            <button
+              class="px-4 py-2 mr-5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg signupBtn loggedOutElement hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              on:click={() => goto("signup")}
+            >
+              Signup
+            </button>
+            <button
+              class="hidden px-4 py-2 font-medium text-center text-white bg-blue-700 rounded-lg loggedOutElement loginBtn hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:block"
+              on:click={() => loginModal.set(true)}
+              id="toggleAuthBtn"
+            >
+              Login
+            </button>
+            {#if $userData["email"]}
+              <li class="loggedInElement">
+                <button class="opacity-80 hover:opacity-100"
+                  >{$userData["email"]}
+                  <i class="ml-1 bi bi-chevron-down"></i>
+                </button>
+                <Dropdown>
+                  <div slot="header" class="px-4 py-2">
+                    <span
+                      class="block text-sm font-medium text-gray-900 dark:text-white"
+                      >{$userData["email"].split("@")[0].toUpperCase()}</span
+                    >
+                    <span class="block text-sm truncate"
+                      >{$userData["email"]}</span
+                    >
+                  </div>
+                  <DropdownItem on:click={() => alert("HI")}
+                    >Overview (close)</DropdownItem
+                  >
+
+                  <DropdownItem
+                    on:click={() => logoutModal.set(true)}
+                    class="flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >Sign out</DropdownItem
+                  >
+                  <DropdownItem
+                    on:click={() => deleteAccountModal.set(true)}
+                    class="flex w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                    >Delete account</DropdownItem
+                  >
+                </Dropdown>
+              </li>
+            {/if}
+            <button
+              id="theme-toggle"
+              type="button"
+              class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+              on:click={() => {
+                document.documentElement.classList.toggle(
+                  "dark",
+                  localStorage.getItem("theme") == "light"
+                );
+                localStorage.setItem(
+                  "theme",
+                  String(
+                    localStorage.getItem("theme") == "light" ? "dark" : "light"
+                  )
+                );
+              }}
+            >
+              <svg
+                id="theme-toggle-dark-icon"
+                class="w-5 h-5 dark:hidden"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+                ></path>
+              </svg>
+              <svg
+                id="theme-toggle-light-icon"
+                class="hidden w-5 h-5 dark:block"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </button>
+          </ul>
+        </nav>
+        <div class="flex ml-3 md:hidden sm:ml-6">
+          <button
+            class="hamburger"
+            data-collapse-toggle="hamburger-menu"
+            aria-controls="hamburger-menu"
+            aria-expanded="false"
+            style="outline: none"
+          >
+            <span class="pointer-events-none sr-only">Menu</span>
+            <svg
+              class="w-6 h-6 pointer-events-none fill-current text-slate-900"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect y="4" width="24" height="2"></rect>
+              <rect y="11" width="24" height="2"></rect>
+              <rect y="18" width="24" height="2"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="items-center justify-between hidden w-full md:hidden md:w-auto md:order-1 dark:text-white"
+    id="hamburger-menu"
+  >
+    <ul
+      class="flex flex-col p-4 mt-4 font-medium border border-gray-100 rounded-lg md:p-0 bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700 dark:text-white"
+    >
+      <li class="dark:text-white">
+        <a
+          href="#"
+          class="block px-3 py-2 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500 dark:text-white"
+          aria-current="page">Home</a
+        >
+      </li>
+      <li class="dark:text-white">
+        <a
+          href="#"
+          class="block px-3 py-2 text-gray-900 rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+          >About</a
+        >
+      </li>
+      <li class="dark:text-white">
+        <a
+          href="#"
+          class="block px-3 py-2 text-gray-900 rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+          >Services</a
+        >
+      </li>
+      <li class="dark:text-white">
+        <a
+          href="#"
+          class="block px-3 py-2 text-gray-900 rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+          >Pricing</a
+        >
+      </li>
+      <li class="dark:text-white">
+        <a
+          href="#"
+          class="block px-3 py-2 text-gray-900 rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+          >Contact</a
+        >
+      </li>
+    </ul>
+  </div>
+</header>
+<LogoutModal></LogoutModal>
+<DeleteAccountModal></DeleteAccountModal>

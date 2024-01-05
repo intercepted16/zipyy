@@ -3,6 +3,7 @@ import os
 from markupsafe import Markup
 from flask import (
     Flask,
+    Blueprint,
     request,
     render_template,
     redirect,
@@ -15,7 +16,6 @@ import random
 import string
 import pymysql
 import bcrypt
-import datetime
 from conf import *
 from flask_login import (
     UserMixin,
@@ -25,14 +25,24 @@ from flask_login import (
     logout_user,
     current_user,
 )
+from flask_compress import Compress
+from flask_cors import CORS
 import re
+
 
 load_dotenv()
 app = Flask(__name__)
+Compress(app)
+CORS(
+    app,
+    resources={r"/*": {"origins": "http://localhost:5173"}},
+    supports_credentials=True,
+)
+api = Blueprint("api", __name__, url_prefix="/api")
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 login_manager = LoginManager(app)
 login_manager.login_view = "login"  # Specify the login view route
-
 
 db_config = {
     "host": DATABASE_HOST,
@@ -246,12 +256,13 @@ class User(UserMixin):
                     "UPDATE users SET deleted = 1 WHERE id = %s", int(self.user_id) - 1
                 )
             cur.execute("DELETE FROM users WHERE id = %s", self.user_id)
-            """"Delete the row(s) from the users table where the user ID is equal to the current users ID."""
+            """"Delete the row(s) from the URLs table where the user ID is equal to the current users ID."""
             cur.execute("DELETE FROM urls WHERE user_id = %s", self.user_id)
 
         # Commit changes to the database
         self.db_connection.commit()
         self._close_database_connection()
+        logout_user()
 
 
 @login_manager.user_loader

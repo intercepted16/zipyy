@@ -1,8 +1,11 @@
 setuptools
 flask
 flask_login
+flask_compress
+flask_cors
 pymysql
 gunicorn
 python_dotenv
 bcrypt
 cryptography
+requests

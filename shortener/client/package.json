@@ -1,0 +1,36 @@
+{
+  "name": "my-project-name",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "tailwind": "npx tailwindcss -i ./src/lib/style.css -o ./src/lib/output.css --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "svelte": "^4.2.7",
+    "svelte-check": "^3.6.0",
+    "sveltekit-superforms": "^1.13.1",
+    "tslib": "^2.4.1",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.3",
+    "zod": "^3.22.4"
+  },
+  "type": "module",
+  "dependencies": {
+    "bootstrap-icons": "^1.11.2",
+    "felte": "^1.2.12",
+    "flowbite": "^2.2.1",
+    "flowbite-svelte": "^0.44.21",
+    "svelte-forms-lib": "^2.0.1",
+    "tailwindcss": "^3.4.0",
+    "vite-plugin-compression": "^0.5.1",
+    "yup": "^1.3.3"
+  }
+}

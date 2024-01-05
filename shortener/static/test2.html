@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Travel Booking App | theuicode.com</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css" />
+  </head>
+
+  <body>
+    <div class="app-container flex justify-center items-end pb-10">
+      <div class="circle rounded-full"></div>
+      <div class="absolute top-16 flex flex-col w-full items-center">
+        <div class="flex items-center w-full">
+          <div class="flex px-6">
+            <div class="h-2 w-2 rounded-full mx-1 red"></div>
+            <div class="h-2 w-2 rounded-full mx-1 yellow"></div>
+            <div class="h-2 w-2 rounded-full mx-1 green"></div>
+          </div>
+          <div
+            class="flex bg-white items-center w-5/12 px-6 py-4 rounded-md app-shadow"
+          >
+            <i class="fa-solid fa-star app-color-yellow text-xs"></i>
+            <span class="font-bold app-color-black ml-4 mr-auto text-xs"
+              >wizzair.com</span
+            >
+            <i class="fa-solid fa-ellipsis app-color-lavendar"></i>
+          </div>
+          <div
+            class="mr-auto flex app-bg-light-white rounded-md px-6 py-4 ml-3 app-shadow"
+          >
+            <i class="fa-brands fa-dribbble app-color-dribbble mr-2"></i>
+            <span class="font-bold app-color-black text-xs">Dribbble</span>
+          </div>
+          <div class="flex bg-white px-6 py-4 app-shadow rounded-md mr-6">
+            <span class="font-bold app-color-black text-xs">Book now</span>
+            <div class="w-px app-bg-light-white-2 mx-4"></div>
+            <i class="fa-regular fa-user mr-2 app-color-black"></i>
+            <i class="fa-solid fa-angle-down text-xs app-color-black"></i>
+          </div>
+        </div>
+        <div class="flex flex-col text-center my-36">
+          <span class="font-semibold text-4xl mb-4 app-title"
+            >Where would you like to go?</span
+          >
+          <span class="app-color-black font-semibold"
+            >Explore your travel opportunities with us!</span
+          >
+        </div>
+        <div
+          class="bg-white/50 w-10/12 px-6 pt-12 pb-16 app-shadow rounded-xl backdrop-blur-[200px]"
+        >
+          <div class="flex pr-6">
+            <span class="font-semibold text-sm app-color-gray w-14 mx-12"
+              >Flights</span
+            >
+            <span class="font-semibold text-sm app-color-gray w-14 mx-12"
+              >Hotels</span
+            >
+            <span
+              class="font-semibold text-sm app-color-gray w-14 mx-12 mr-auto active"
+              >Cars</span
+            >
+            <label class="flex items-center cursor-pointer">
+              <span class="font-semibold text-sm app-color-black mr-6"
+                >One way</span
+              >
+              <div class="switch">
+                <input type="checkbox" class="switch-checkbox" />
+                <div class="switch-bg"></div>
+                <div class="switch-indicator"></div>
+              </div>
+            </label>
+          </div>
+          <div class="flex mt-16">
+            <div
+              class="bg-white/80 mx-6 flex flex-col w-1/3 p-6 rounded-xl border-2 border-white"
+            >
+              <span class="font-semibold text-xs app-color-lavendar"
+                >Leaving from</span
+              >
+              <span class="font-semibold text-lg app-color-black"
+                >Georgia, Tbilisi</span
+              >
+            </div>
+            <div
+              class="bg-white/80 mx-6 flex flex-col w-1/3 p-6 rounded-xl border-2 border-white"
+            >
+              <span class="font-semibold text-xs app-color-lavendar"
+                >Destination</span
+              >
+              <span class="font-semibold text-lg app-color-pink"
+                >France, Paris</span
+              >
+            </div>
+            <div
+              class="bg-white/80 mx-6 flex flex-col w-1/3 p-6 rounded-xl border-2 border-white"
+            >
+              <span class="font-semibold text-xs app-color-lavendar"
+                >Passengers</span
+              >
+              <span class="font-semibold text-lg app-color-black"
+                >2 adults, 3 children, 1 pet</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

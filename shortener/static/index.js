@@ -86,7 +86,7 @@ $(document).ready(function () {
       $("#editModal").modal("show");
       const id = $(this).data("id");
       const shortened = $(this).data("shortened");
-      $("#editModal").attr("data-id", id);
+      $("#editModal").attr("dlwata-id", id);
       $("#editUrlLabel").text(`Editing URL ${shortened}`);
       $("#editUrlChangesBtn").on("click", async function () {
         if (
