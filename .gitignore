@@ -173,7 +173,7 @@ cython_debug/
 .vercel
 
 .DS_Store
-node_modules
+/node_modules
 /build
 /.svelte-kit
 /package
