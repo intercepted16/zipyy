@@ -4,5 +4,7 @@
   });
   const data = await response.json();
 
-  document.querySelector("html").setAttribute("loggedin", data["logged_in"]);
+  document.documentElement.setAttribute("loggedin", data["logged_in"]);
 })();
+
+document.documentElement.classList.add("js");

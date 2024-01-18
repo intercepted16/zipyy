@@ -9,11 +9,11 @@
 	%sveltekit.head%
 	<script src="/js/main.js"></script>
 	<script src="/js/theming.js"></script>
-	<link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.min.css" />
+	<link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
 </head>
 
-<body data-sveltekit-preload-data="hover" class="dark:bg-gray-900">
-	<div style="display: contents">%sveltekit.body%</div>
+<body data-sveltekit-preload-data="hover" class="dark:bg-gray-900" data-theme="skeleton">
+	<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>
 </body>
 
 </html>

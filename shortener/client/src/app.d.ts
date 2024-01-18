@@ -7,6 +7,10 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+		interface Locals {
+			supabase: SupabaseClient;
+			getSession(): Promise<Session | null>;
+		}
 	}
 }
 

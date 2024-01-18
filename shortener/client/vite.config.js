@@ -1,9 +1,10 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import viteCompression from "vite-plugin-compression";
+import { compression } from "vite-plugin-compression2";
+
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [sveltekit(), viteCompression({ algorithm: "gzip" })],
+  plugins: [sveltekit(), compression({ algorithm: "gzip" })],
   server: {
     host: "0.0.0.0",
     port: 5173,

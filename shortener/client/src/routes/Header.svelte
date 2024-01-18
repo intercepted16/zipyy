@@ -2,18 +2,60 @@
   import { onMount } from "svelte";
   import { logoutModal, deleteAccountModal, userData } from "./store";
   import {
-    Modal,
-    Button,
-    Dropdown,
-    DropdownDivider,
-    DropdownHeader,
-    DropdownItem,
-    A,
-  } from "flowbite-svelte";
+    LightSwitch,
+    ListBox,
+    ListBoxItem,
+    popup,
+    AppBar,
+  } from "@skeletonlabs/skeleton";
+  import { Button, Dropdown, DropdownItem } from "flowbite-svelte";
   import DeleteAccountModal from "../lib/components/DeleteAccountModal.svelte";
   import LogoutModal from "../lib/components/LogoutModal.svelte";
-  import { loginModal } from "./store";
   import { goto } from "$app/navigation";
+  let comboboxValue: string;
+  import type { PopupSettings } from "@skeletonlabs/skeleton";
+  import { browser } from "$app/environment";
+  const themes: string[] = ["light", "dark", "system"];
+  let selectedTheme: string;
+  import { getModalStore, type ModalSettings } from "@skeletonlabs/skeleton";
+
+  const modalStore = getModalStore();
+  const loginModal: ModalSettings = {
+    type: "component",
+    component: "loginModal",
+  };
+  // $: console.log(selectedTheme);
+  $: if (browser && selectedTheme) {
+    let theme = selectedTheme;
+    if (selectedTheme == "system") {
+      theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : selectedTheme;
+    }
+    document.documentElement.classList.remove("light", "dark", "system");
+    document.documentElement.classList.add(theme);
+    localStorage.setItem("theme", selectedTheme);
+  }
+  const popupCombobox: PopupSettings = {
+    event: "click",
+    target: "popupCombobox",
+    placement: "bottom",
+    closeQuery: ".listbox-item",
+  };
+
+  // const storeExample: Writable<string> = localStorageStore("theme", "system");
+  // console.log(storeExample.set("light"));
+  // storeExample.subscribe(() => {
+  //   console.log(get(storeExample));
+  // });
+  onMount(() => {
+    if (browser) {
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme && themes.includes(storedTheme)) {
+        selectedTheme = storedTheme;
+      }
+    }
+  });
 </script>
 
 <header class="relative sticky top-0 z-20 py-3 md:py-5 bg-blue blur-filter">
@@ -46,33 +88,29 @@
       <div class="inline-flex items-center">
         <nav class="hidden md:flex md:grow">
           <ul class="flex flex-wrap items-center justify-end text-sm grow">
-            <li class="ml-8 border-slate-200">
-              <a
-                href="/contact"
-                class="block font-semibold text-slate-800 hover:underline py-0.5"
-                style="outline: none">Contact</a
-              >
-            </li>
-            <li class="pl-6 ml-6 border-l border-slate-200">
-              <a
-                class="block font-semibold text-indigo-500 hover:underline py-0.5 mr-5"
-                href="https://cruip.com/login/"
-                style="outline: none">Source Code</a
-              >
-            </li>
             <button
               class="px-4 py-2 mr-5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg signupBtn loggedOutElement hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              on:click={() => goto("signup")}
+              on:click={() => goto("/signup")}
             >
               Signup
             </button>
-            <button
-              class="hidden px-4 py-2 font-medium text-center text-white bg-blue-700 rounded-lg loggedOutElement loginBtn hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:block"
-              on:click={() => loginModal.set(true)}
+            <Button
+              class="hidden px-4 py-2 font-medium text-center text-white bg-blue-700 rounded-lg loggedOutElement loginBtn hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:block no-js-hide"
+              on:click={(e) => {
+                e.preventDefault();
+                modalStore.trigger(loginModal);
+              }}
               id="toggleAuthBtn"
             >
               Login
-            </button>
+            </Button>
+            <Button
+              href="/login"
+              class="hidden px-4 py-2 font-medium text-center text-white bg-blue-700 rounded-lg loggedOutElement loginBtn hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 sm:block js-hide"
+              id="toggleAuthBtn"
+            >
+              Login
+            </Button>
             {#if $userData["email"]}
               <li class="loggedInElement">
                 <button class="opacity-80 hover:opacity-100"
@@ -106,7 +144,7 @@
                 </Dropdown>
               </li>
             {/if}
-            <button
+            <!-- <button
               id="theme-toggle"
               type="button"
               class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
@@ -147,7 +185,63 @@
                   clip-rule="evenodd"
                 ></path>
               </svg>
+            </button> -->
+            <!-- <AppBar background="bg-red-500 dark:bg-orange-500">Skeleton</AppBar> -->
+
+            <button
+              class="justify-between w-16 mx-2 btn variant-filled-primary flex-center no-js-hide"
+              use:popup={popupCombobox}
+            >
+              <i class="text-white bi bi-moon-stars-fill"></i>
             </button>
+
+            <!-- <div
+              class="w-48 py-2 shadow-xl card no-js-hide"
+              data-popup="popupCombobox"
+            >
+              <ListBox rounded="rounded-none">
+                {#each themes as theme}
+                  <ListBoxItem
+                    bind:group={selectedTheme}
+                    name="medium"
+                    aria-selected={selectedTheme === theme}
+                    active="bg-primary-active-token"
+                    value={theme}
+                    >{theme.charAt(0).toUpperCase() +
+                      theme.slice(1)}</ListBoxItem
+                  >
+                {/each}
+              </ListBox>
+              <div class="arrow bg-surface-100-800-token" />
+            </div> -->
+            <li>
+              <a
+                aria-label="View on Github"
+                class="github-corner uk-visible@l uk-position-absolute uk-position-top-right absolute top-0 right-0"
+                href="https://github.com/keepassxreboot/keepassxc"
+              >
+                <svg
+                  aria-hidden="true"
+                  height="50"
+                  viewBox="0 0 250 250"
+                  width="50"
+                  class="w-20 h-20 text-white dark:text-black fill-gray-800 dark:fill-slate-50 excludedText"
+                >
+                  <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"
+                  ></path>
+                  <path
+                    d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+                    fill="currentColor"
+                    style="transform-origin: 130px 106px;"
+                  ></path>
+                  <path
+                    class="octo-body"
+                    d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </a>
+            </li>
           </ul>
         </nav>
         <div class="flex ml-3 md:hidden sm:ml-6">
@@ -211,7 +305,7 @@
       <li class="dark:text-white">
         <a
           href="#"
-          class="block px-3 py-2 text-gray-900 rounded md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+          class="block px-3 py-2 text-gray-900 rounded dark:text-white md:p-0 hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
           >Contact</a
         >
       </li>
