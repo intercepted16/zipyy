@@ -1,0 +1,268 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html,
+body {
+  @apply h-full;
+}
+
+body {
+  background-image:
+    radial-gradient(at 0% 0%, rgba(var(--color-secondary-500) / 0.33) 0px, transparent 50%),
+    radial-gradient(at 98% 1%, rgba(var(--color-error-500) / 0.33) 0px, transparent 50%);
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+body {
+  overflow-wrap: break-word;
+}
+
+.light-text {
+  font-weight: 200;
+}
+
+.larger-text {
+  font-size: calc(1.25rem);
+}
+
+@media only screen and (max-width: 768px) {
+  #inputDiv {
+    margin-bottom: 10px;
+  }
+}
+
+/* @media only screen and (max-width: 992px) {
+  .vr {
+    display: none !important;
+  }
+  #signupNav {
+    margin-left: 0px !important;
+  }
+  #toggleAuthBtn {
+    margin-top: 10px;
+    margin-left: 0px !important;
+  }
+} */
+
+#menubarAccountDiv {
+  margin-right: 10px;
+}
+
+#urlsTable {
+  margin-top: 20px;
+  width: 50vw;
+}
+
+#settingsBtn {
+  margin-right: 10px;
+}
+
+.login-container .contact-container {
+  margin-top: 5%;
+}
+
+.login-form {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(221, 212, 212, 0.1);
+}
+.contact-form {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(221, 212, 212, 0.1);
+}
+
+.login-form h2,
+.contact-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* :root[loggedin="false"] .loggedInElement {
+  @apply !hidden;
+}
+
+:root[loggedin="true"] .loggedOutElement {
+  @apply !hidden;
+} */
+
+/* :root:not([loggedin]) body { */
+  /* @apply hidden; */
+/* } */
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.font-inter {
+  font-family: Inter, Inter_Fallback;
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
+.blur-filter {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.25);
+}
+
+:root.dark .blur-filter {
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+/* *:not(.excludedText) {
+  @apply dark:text-white;
+} */
+
+button {
+  user-select: none;
+}
+
+.flex-center {
+  @apply flex justify-center items-center
+}
+
+
+.custom-scrollbar {
+  ::-webkit-scrollbar {
+      width: 10px;
+    }
+  
+    /* Track */
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+  
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 5px;
+    }
+  
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    
+}
+
+:root.dark .custom-scrollbar {
+    ::-webkit-scrollbar {
+        width: 10px;
+      }
+    
+      /* Track */
+      ::-webkit-scrollbar-track {
+        background: #1d1919ad;
+      }
+    
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 5px;
+      }
+    
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #ff0000;
+      }
+}
+
+:root.js .js-hide {
+  display: none;
+}
+
+:root:not(.js) .no-js-hide {
+  display: none;
+}
+
+
+html,
+body {
+  @apply h-full overflow-hidden;
+}
+
+
+
+.un {
+  display: inline-block;
+}
+
+.un:after {
+  content: '';
+  width: 0px;
+  height: 2px;
+  display: block;
+  @apply bg-black dark:bg-white;
+  transition: 300ms;
+}
+
+.un:hover:after {
+  width: 100%;
+}
+
+[data-popup] {
+  * :is(button, a) {
+    width: 100%;
+    justify-content: center;
+    }
+  }
+
+
+    @layer components {
+.small-rounded-r-md {
+  @apply sm:rounded-l-none sm:rounded-r-md
+}
+    }
+
+
+main {
+  @apply py-8
+}
+
+.btn {
+  @apply disabled:scale-[100%]
+}
+
+    /* #page {
+      @apply bg-gray-900;
+    } */
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+ /* .input {
+  @apply rounded-md
+} */
+
+.input[data-fs-error]:not(:focus) {
+  @apply input-error
+}
+
+p[data-fs-validation] {
+  @apply text-sm
+}
+
+p[data-fs-error] {
+  @apply text-red-500
+}
+
+label[data-fs-label] {
+  @apply ml-2                                                                                                                                                                                                                      
+}
