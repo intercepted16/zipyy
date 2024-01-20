@@ -20,9 +20,6 @@
     component: "urlModal",
   };
 
-  // decodeURIComponent(
-  //         $page.url.hash.split("error_description=")[1].replace(/\+/g, " ")
-  //       )
   $: if ($page.url.hash.slice(1).startsWith("error=")) {
     const verificationError: ModalSettings = {
       type: "alert",
