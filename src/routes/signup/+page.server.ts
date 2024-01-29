@@ -1,11 +1,11 @@
-import { z } from "zod";
 import { setError, superValidate } from "sveltekit-superforms/server";
 import { fail, redirect } from "@sveltejs/kit";
-import { schema } from "$lib/schemas/signup-login.js";
-import { signupOrLogin } from "../store.js";
+import { loginSchema as schema } from "$lib/schema";
+import { signupOrLogin } from "../store";
 import { get } from "svelte/store";
 import type { AuthResponse } from "@supabase/supabase-js";
-export const load = async ({ url, locals: { getSession } }) => {
+export const load = async ({ url, locals: { getSession, userExists } }) => {
+  console.log(await userExists("abc"));
   const session = await getSession();
 
   // if the user is already logged in return them to the account page
@@ -16,7 +16,12 @@ export const load = async ({ url, locals: { getSession } }) => {
   const form = await superValidate(schema);
 
   // Unless you throw, always return { form } in load and form actions.
-  return { form, url: url.origin };
+  console.log(await userExists("james@gmail.com"));
+
+  return {
+    form,
+    url: url.origin,
+  };
 };
 
 export const actions = {
