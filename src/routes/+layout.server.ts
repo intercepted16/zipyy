@@ -1,7 +1,5 @@
-import type { PageServerLoad } from "./$types";
-
-export const load: PageServerLoad = async ({ locals: { getSession } }) => {
+export const load = async ({ locals: { getSession } }) => {
   return {
-    session: await getSession(),
+    session: await getSession()
   };
 };

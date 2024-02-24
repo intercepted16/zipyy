@@ -80,14 +80,15 @@
     text-decoration: none;
   }
 
-  a:not(:has(img, svg))::before {
-    content: "";
+  a:not(:has(img, svg), [data-button-root])::before {
+    content: '';
     @apply w-0 h-[2px] absolute bottom-0 left-0;
     background-color: #3490dc; /* Change this to your desired underline color */
     transition: width 0.3s ease; /* Adjust the transition duration and timing function as needed */
+    box-shadow: 0 30px 0 transparent; /* Add box-shadow for padding on hover */
   }
 
-  a:not(:has(img, svg)):hover::before {
+  a:not(:has(img, svg), [data-button-root]):hover::before {
     @apply w-full;
   }
   body {
