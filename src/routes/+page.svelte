@@ -5,7 +5,6 @@
   import type { ActionData } from "./$types";
   import { ChevronDown, Github } from "lucide-svelte";
   import * as Dialog from "$lib/components/ui/dialog";
-  import { get } from "svelte/store";
   export let data;
   export let form: ActionData;
   const superFrm = data.form;
@@ -129,11 +128,11 @@
               open = true;
             }
           },
+          resetForm: true,
         }}
         {schema}
         form={superFrm}
         let:config
-        let:formStore
         debug={true}
         class="space-y-2"
       >
@@ -157,21 +156,25 @@
             <div class="grid gap-4 py-4">
               <div class="grid items-center gap-4">
                 <span
-                  >Original: <a href={`https://${get(formStore).url}`}
-                    >{get(formStore).url}</a
+                  >Original: <a
+                    href={`https://${form?.original ?? "google.com"}`}
+                    >{form?.original ?? "google.com"}</a
                   ></span
                 >
               </div>
               <div class="grid items-center gap-4">
                 <span
-                  >Shortened: <a href={`https://${form?.shortened}`}
-                    >{form?.shortened}</a
+                  >Shortened: <a
+                    href={`https://${form?.shortened ?? "sh.ps.ai/dma)F1"}`}
+                    >{form?.shortened ?? "sh.ps.ai/dma)F1"}</a
                   ></span
                 >
               </div>
             </div>
             <Dialog.Footer>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit" on:click={() => (open = false)}
+                >Save changes</Button
+              >
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Root>
