@@ -1,24 +1,22 @@
 <script lang="ts">
-  import { invalidate } from '$app/navigation';
-  import * as AlertDialog from '$lib/components/ui/alert-dialog';
-  import { Button } from '$lib/components/ui/button';
-  import * as Dialog from '$lib/components/ui/dialog';
-  import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-  import { shortenSchema as schema } from '$lib/schema';
-  import { editDialog, id as storeId } from '$store';
-  import * as Form from '$ui/form';
-  import { Input } from '$ui/input';
-  import { MoreHorizontal } from 'lucide-svelte';
-  import SuperDebug, { type Infer, type SuperForm } from 'sveltekit-superforms';
-  import type { PageData } from '../../routes/$types';
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Button } from "$lib/components/ui/button";
+  import * as Dialog from "$lib/components/ui/dialog";
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import { shortenSchema as schema } from "$lib/schema";
+  import { editDialog, id as storeId, shortenedUrlsRoute } from "$store";
+  import * as Form from "$ui/form";
+  import { Input } from "$ui/input";
+  import MoreHorizontal from "$lucide/more-horizontal.svelte";
+  import SuperDebug, { type Infer, type SuperForm } from "sveltekit-superforms";
+  import type { SupabaseClient } from "@supabase/supabase-js";
+  import { invalidateUrlData } from "$store";
 
   export let shortened: string;
   export let id: number;
   let deleteDialog: boolean;
   export let superFrm: SuperForm<Infer<typeof schema>>;
-  export let data: PageData;
-  let { supabase } = data;
-  $: ({ supabase } = data);
+  export let supabase: SupabaseClient;
   const { form: formData, enhance, errors } = superFrm;
 </script>
 
@@ -35,9 +33,10 @@
       <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
       <AlertDialog.Action
         on:click={async () => {
-          await supabase.from('shortened_urls').delete().eq('id', id);
-          console.log(await invalidate('urls'));
-        }}>Continue</AlertDialog.Action>
+          await supabase.from("shortened_urls").delete().eq("id", id);
+          $invalidateUrlData = true;
+        }}>Continue
+      </AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
@@ -55,7 +54,7 @@
           <Input {...attrs} bind:value={$formData.url} />
         </Form.Control>
         <Form.Description>This is your public display name.</Form.Description>
-        <Form.FieldErrors let:errors />
+        <Form.FieldErrors />
       </Form.Field>
       <Dialog.Footer>
         <Button variant="outline" on:click={() => ($editDialog = false)}>Cancel</Button>
@@ -77,7 +76,7 @@
     <DropdownMenu.Group>
       <DropdownMenu.Label>Actions</DropdownMenu.Label>
       <DropdownMenu.Item
-        on:click={() => navigator.clipboard.writeText(`https://sh.ps.ai/${shortened}`)}>
+        on:click={() => navigator.clipboard.writeText(`${shortenedUrlsRoute}/${shortened}`)}>
         Copy shortened URL
       </DropdownMenu.Item>
     </DropdownMenu.Group>
@@ -86,8 +85,10 @@
       on:click={() => {
         $editDialog = true;
         $storeId = id;
-      }}>Edit URL</DropdownMenu.Item>
+      }}>Edit URL
+    </DropdownMenu.Item>
     <DropdownMenu.Item on:click={() => (deleteDialog = true)}
-      >Delete shortened URL</DropdownMenu.Item>
+    >Delete shortened URL
+    </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

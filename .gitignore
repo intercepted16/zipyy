@@ -14,5 +14,4 @@ vite.config.ts.timestamp-*
 vercel.json
 
 .env*.local
-
-/src/lib/components/ui
+/.idea
