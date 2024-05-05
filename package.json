@@ -29,6 +29,7 @@
   "type": "module",
   "dependencies": {
     "@supabase/ssr": "^0.1.0",
+    "@sveltejs/adapter-cloudflare": "^4.4.0",
     "autoprefixer": "^10.4.17",
     "bits-ui": "^0.19.6",
     "clsx": "^2.1.0",
