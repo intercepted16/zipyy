@@ -1,0 +1,13 @@
+name = "zipyy"
+account_id = "e816384a08fa80bde19c9b060b1c8c5e"
+
+main = "./.cloudflare/worker.js"
+site.bucket = "./.svelte-kit/.cloudflare"
+
+build.command = "bun run build"
+
+workers_dev = true
+
+[vars]
+PUBLIC_SUPABASE_URL = "https://zkrcvefrvgcbezwmqdmc.supabase.co"
+PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcmN2ZWZydmdjYmV6d21xZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA2NDk5ODksImV4cCI6MjAyNjIyNTk4OX0.oakUr5sv5qfbCXbV6VAMd8EQLRCkTDN7fatD77LPjTc"

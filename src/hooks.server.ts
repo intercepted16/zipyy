@@ -1,4 +1,4 @@
-import { SUPABASE_SERVICE_ROLE_KEY } from "$env/static/private";
+import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from "$env/static/private";
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
 import { createServerClient, type CookieMethods } from "@supabase/ssr";
 import type { Handle, RequestEvent } from "@sveltejs/kit";
@@ -53,9 +53,13 @@ export const handle: Handle = async ({ event, resolve }) => {
   };
   // helper function to check if a user exists, can only be run on server
   event.locals.userExists = async (email: string) => {
-    const supabaseAdmin = createServerClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-      cookies: cookieMethods(event)
-    });
+    const supabaseAdmin = createServerClient(
+      PUBLIC_SUPABASE_URL,
+      PRIVATE_SUPABASE_SERVICE_ROLE_KEY,
+      {
+        cookies: cookieMethods(event)
+      }
+    );
     const { data } = await supabaseAdmin.auth.admin.listUsers();
     const userEmails = data.users.map((user) => user.email);
 
