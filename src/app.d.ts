@@ -13,7 +13,13 @@ declare global {
     }
     // interface Error {}
     // interface PageState {}
-    // interface Platform {}
+    interface Platform {
+      env?: {
+        PUBLIC_SUPABASE_ANON_KEY: string;
+        PUBLIC_SUPABASE_URL: string;
+        PRIVATE_SUPABASE_SERVICE_ROLE_KEY: string;
+      };
+    }
   }
 }
 
