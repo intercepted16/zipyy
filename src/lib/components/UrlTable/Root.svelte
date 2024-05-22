@@ -22,13 +22,7 @@
   import ArrowUpDown from "$lucide/arrow-up.svelte";
   import { invalidateUrlData } from "$store";
   import { Input } from "$ui/input";
-
-  type urlData = {
-    id: number;
-    original: string;
-    shortened: string;
-    user_id: string | null;
-  };
+  import type { urlData } from "$lib/types/database";
   export let urlData: urlData[];
   export let superFrm: SuperValidated<Infer<typeof schema>>;
   const editForm = superForm(superFrm, {
@@ -286,13 +280,15 @@
             variant="outline"
             size="sm"
             on:click={() => ($pageIndex = $pageIndex - 1)}
-            disabled={!$hasPreviousPage}>Previous
+            disabled={!$hasPreviousPage}
+            >Previous
           </Button>
           <Button
             variant="outline"
             size="sm"
             disabled={!$hasNextPage}
-            on:click={() => ($pageIndex = $pageIndex + 1)}>Next
+            on:click={() => ($pageIndex = $pageIndex + 1)}
+            >Next
           </Button>
         </div>
       </div>

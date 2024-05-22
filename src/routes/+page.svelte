@@ -12,18 +12,12 @@
   import { inview } from "svelte-inview";
   import { invalidateUrlData } from "$store";
   import { Skeleton } from "$ui/skeleton";
+  import type { urlData } from "$lib/types/database";
 
   export let data;
   export let form: ActionData;
 
   let Form: typeof import("$ui/form");
-
-  type urlData = {
-    id: number;
-    original: string;
-    shortened: string;
-    user_id: string | null;
-  };
 
   let { supabase, session } = data;
   $: ({ supabase, session } = data);
