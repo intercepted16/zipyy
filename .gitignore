@@ -14,3 +14,5 @@ vercel.json
 
 .env*.local
 /.idea
+/.vscode
+/.wrangler
