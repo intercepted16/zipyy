@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Button } from "$ui/button";
+  import LazyLoad from "$lib/components/LazyLoad";
   import { shortenSchema as schema } from "$lib/schema";
   import type { ActionData } from "./$types";
   import Github from "$lucide/github.svelte";
@@ -7,11 +8,7 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { Input } from "$lib/components/ui/input";
   import ChevronDown from "$lucide/chevron-down.svelte";
-  import type { ComponentType } from "svelte";
-  import { onMount, SvelteComponent } from "svelte";
-  import { inview } from "svelte-inview";
   import { invalidateUrlData } from "$store";
-  import { Skeleton } from "$ui/skeleton";
   import type { urlData } from "$lib/types/database";
 
   export let data;
@@ -51,10 +48,6 @@
   }
 
   const { enhance, form: formData } = superFrm;
-  let editForm: Awaited<typeof data.editForm>;
-  let UrlTable: ComponentType<
-    SvelteComponent<{ superFrm: typeof editForm; urlData: urlData[]; supabase: typeof supabase }>
-  >;
   let Dialog: any;
 </script>
 
@@ -143,98 +136,69 @@
       class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
       Shorten a URL...
     </h1>
-    <div
-      use:inview={{ rootMargin: "-4px", unobserveOnEnter: true }}
-      on:inview_enter={async () => {
-        Form = await import("$ui/form");
-      }}>
-    </div>
-    {#if Form}
-      <div>
-        <form method="POST" action="?/shorten" class="space-y-2" use:enhance>
-          <Form.Field form={superFrm} name="url">
-            <Form.Control let:attrs>
-              <Form.Label>URL</Form.Label>
-              <Input bind:value={$formData.url} {...attrs} />
-              <Form.FieldErrors />
-            </Form.Control>
-          </Form.Field>
+    <LazyLoad
+      options={{ rootMargin: "-4px", unobserveOnEnter: true }}
+      skeleton={{ length: 4, class: "w-full h-8" }}>
+      {#await import("$ui/form") then Form}
+        <div>
+          <form method="POST" action="?/shorten" class="space-y-2" use:enhance>
+            <Form.Field form={superFrm} name="url">
+              <Form.Control let:attrs>
+                <Form.Label>URL</Form.Label>
+                <Input bind:value={$formData.url} {...attrs} />
+                <Form.FieldErrors />
+              </Form.Control>
+            </Form.Field>
 
-          {#if Dialog}
-            <Dialog.Root bind:open>
-              <Dialog.Trigger>hi</Dialog.Trigger>
-              <Dialog.Content class="sm:max-w-[425px]">
-                <Dialog.Header>
-                  <Dialog.Title>Your shortened URL</Dialog.Title>
-                </Dialog.Header>
-                <div class="grid gap-4 py-4">
-                  <div class="grid items-center gap-4">
-                    <span
-                      >Original: <a href={`https://${form?.original ?? "google.com"}`}
-                        >{form?.original ?? "google.com"}</a
-                      ></span>
+            {#if Dialog}
+              <Dialog.Root bind:open>
+                <Dialog.Trigger>hi</Dialog.Trigger>
+                <Dialog.Content class="sm:max-w-[425px]">
+                  <Dialog.Header>
+                    <Dialog.Title>Your shortened URL</Dialog.Title>
+                  </Dialog.Header>
+                  <div class="grid gap-4 py-4">
+                    <div class="grid items-center gap-4">
+                      <span
+                        >Original: <a href={`https://${form?.original ?? "google.com"}`}
+                          >{form?.original ?? "google.com"}</a
+                        ></span>
+                    </div>
+                    <div class="grid items-center gap-4">
+                      <span
+                        >Shortened: <a href={`https://${form?.shortened ?? "sh.ps.ai/dma)F1"}`}
+                          >{form?.shortened ?? "sh.ps.ai/dma)F1"}</a
+                        ></span>
+                    </div>
                   </div>
-                  <div class="grid items-center gap-4">
-                    <span
-                      >Shortened: <a href={`https://${form?.shortened ?? "sh.ps.ai/dma)F1"}`}
-                        >{form?.shortened ?? "sh.ps.ai/dma)F1"}</a
-                      ></span>
-                  </div>
-                </div>
-                <Dialog.Footer>
-                  <Button type="submit" class="mb-2 sm:mb-0 w-full" on:click={() => (open = false)}
-                    >Okay
-                  </Button>
-                </Dialog.Footer>
-              </Dialog.Content>
-            </Dialog.Root>
-          {/if}
-          <Form.Button class="w-full">Shorten</Form.Button>
-        </form>
-      </div>
-    {:else}
-      {#each { length: 4 } as _}
-        <Skeleton class="w-full h-8"></Skeleton>
-      {/each}
-    {/if}
+                  <Dialog.Footer>
+                    <Button
+                      type="submit"
+                      class="mb-2 sm:mb-0 w-full"
+                      on:click={() => (open = false)}
+                      >Okay
+                    </Button>
+                  </Dialog.Footer>
+                </Dialog.Content>
+              </Dialog.Root>
+            {/if}
+            <Form.Button class="w-full">Shorten</Form.Button>
+          </form>
+        </div>
+      {/await}
+    </LazyLoad>
   </div>
 </div>
-<!-- first check if theres a session in the first place,
-if so, create a div to listen for intersection
-when in view, (if in view), only for the first time,
-fetch urls,
-if its nothing, return
-else dynamically import the url table,
-which causes the other UrlTable if statement to rerender. -->
-{#if session}
-  <div
+<!-- lazy load urlTable-->
+{#if session && $urlData.length > 0}
+  <LazyLoad
     class="mt-4"
-    use:inview={{ unobserveOnEnter: true }}
-    on:inview_enter={async () => {
-      if (localStorage.getItem("urlData")) {
-        //@ts-expect-error
-        urlData = JSON.parse(localStorage.getItem("urlData"));
-        console.log(typeof urlData);
-      } else {
-        //@ts-expect-error
-        urlData = (await supabase.from("shortened_urls").select().eq("user_id", session?.user.id))
-          .data;
-        localStorage.setItem("urlData", JSON.stringify(urlData));
-      }
-      if (urlData.length < 0) return;
-      // cache???
-      UrlTable = (await import("$lib/components/UrlTable")).default;
-    }}>
-  </div>
-  {#if UrlTable}
-    {#await data.editForm then editForm}
-      <svelte:component this={UrlTable} {urlData} superFrm={editForm} {supabase}></svelte:component>
+    options={{ unobserveOnEnter: true }}
+    skeleton={{ length: 8, class: "h-8 sm:max-w-md flex mx-auto" }}>
+    {#await import("$lib/components/UrlTable") then UrlTable}
+      {#await data.editForm then editForm}
+        <UrlTable.default urlData={$urlData} superFrm={editForm} {supabase} />
+      {/await}
     {/await}
-  {:else}
-    <div class="space-y-4 sm:px-0 px-4">
-      {#each { length: 8 } as _}
-        <Skeleton class="h-8 sm:max-w-md flex mx-auto" />
-      {/each}
-    </div>
-  {/if}
+  </LazyLoad>
 {/if}
