@@ -1,7 +1,7 @@
 <script lang="ts">
   import Actions from "./Actions.svelte";
   import DataTableCheckbox from "./Checkbox.svelte";
-  import { shortenSchema as schema } from "$lib/schema";
+  import { shortenSchema as schema } from "$types/validation/schema";
   import { editDialog, id, shortenedUrlsRoute } from "$store";
   import { createRender, createTable, Subscribe, Render } from "svelte-headless-table";
   import { cn } from "$lib/utils";
@@ -20,10 +20,9 @@
   import type { Infer, SuperValidated } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
   import ArrowUpDown from "$lucide/arrow-up.svelte";
-  import { invalidateUrlData } from "$store";
   import { Input } from "$ui/input";
-  import type { urlData } from "$lib/types/database";
-  export let urlData: urlData[];
+  import type { ShortenedUrls } from "$types/database/schema";
+  import { urlData } from "$store";
   export let superFrm: SuperValidated<Infer<typeof schema>>;
   const editForm = superForm(superFrm, {
     validators: zodClient(schema),
@@ -33,21 +32,20 @@
     onUpdated: async ({ form }) => {
       if (!form.valid) return 1;
       $editDialog = false;
-      $invalidateUrlData = true;
+      urlData.reset();
     }
   });
   export let supabase: SupabaseClient;
-
-  function createUrlTable(urlData: urlData[]) {
+  function createUrlTable(urlData: ShortenedUrls[]) {
     const table = createTable(readable(urlData), {
-      sort: addSortBy({ disableMultiSort: true }),
-      page: addPagination(),
-      filter: addTableFilter({
-        fn: ({ filterValue, value }) => value.includes(filterValue)
-      }),
-      select: addSelectedRows(),
-      hide: addHiddenColumns()
-    });
+  sort: addSortBy({ disableMultiSort: true }),
+  page: addPagination(),
+  filter: addTableFilter({
+    fn: ({ filterValue, value }) => value.includes(filterValue)
+  }),
+  select: addSelectedRows(),
+  hide: addHiddenColumns()
+});
     const columns = table.createColumns([
       table.column({
         header: (_, { pluginStates }) => {
@@ -76,7 +74,7 @@
       table.column({
         header: "Original",
         accessor: "original",
-        cell: ({ value }) => value.toLowerCase(),
+        cell: ({ value }) => (value as string).toLowerCase(),
         plugins: {
           filter: {
             getFilterValue(value: string) {
@@ -105,8 +103,8 @@
         accessor: ({ id }) => id,
         cell: ({ row }) => {
           return createRender(Actions, {
-            shortened: urlData[row.id as unknown as number].shortened,
-            id: urlData[row.id as unknown as number].id,
+            shortened: $urlData[row.id as unknown as number].shortened as string,
+            id: $urlData[row.id as unknown as number].id,
             superFrm: editForm as SuperForm<Infer<typeof schema>>,
             supabase
           });
@@ -182,7 +180,7 @@
       selectedDataIds,
       headerRows,
       tableBodyAttrs
-    } = createUrlTable(urlData as unknown as urlData[]));
+    } = createUrlTable($urlData));
   }
 </script>
 
@@ -245,7 +243,7 @@
                             <a
                               href={`${shortenedUrlsRoute}/${
                                 // @ts-ignore: Object is possibly "null".
-                                urlData[row.id].shortened
+                                $urlData[row.id].shortened
                               }`}
                               class="text-right font-medium">
                               <Render of={cell.render()} />
@@ -254,7 +252,7 @@
                             <a
                               href={`https://${
                                 // @ts-ignore: Object is possibly "null".
-                                urlData[row.id].original
+                                $urlData[row.id].original
                               }`}
                               class="text-right font-medium">
                               <Render of={cell.render()} />

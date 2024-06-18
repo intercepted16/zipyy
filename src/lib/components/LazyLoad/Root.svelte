@@ -14,7 +14,6 @@
   class={className}
   on:inview_enter={async () => {
     inview_enter();
-    console.log("inview_enter");
     entered = true;
   }}>
 </div>

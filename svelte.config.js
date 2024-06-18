@@ -21,7 +21,8 @@ const config = {
       $ui: "./src/lib/components/ui",
       $store: "./src/routes/store.ts",
       $routes: "./src/routes",
-      $lucide: "node_modules/lucide-svelte/dist/icons"
+      $lucide: "node_modules/lucide-svelte/dist/icons",
+      $types: "./src/lib/types"
     }
   }
 };

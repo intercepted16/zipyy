@@ -3,21 +3,21 @@
   import { Button } from "$lib/components/ui/button";
   import * as Dialog from "$lib/components/ui/dialog";
   import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
-  import { shortenSchema as schema } from "$lib/schema";
+  import { shortenSchema as schema } from "$types/validation/schema";
   import { editDialog, id as storeId, shortenedUrlsRoute } from "$store";
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
   import MoreHorizontal from "$lucide/more-horizontal.svelte";
   import SuperDebug, { type Infer, type SuperForm } from "sveltekit-superforms";
   import type { SupabaseClient } from "@supabase/supabase-js";
-  import { invalidateUrlData } from "$store";
+  import { urlData } from "$store";
 
   export let shortened: string;
   export let id: number;
   let deleteDialog: boolean;
   export let superFrm: SuperForm<Infer<typeof schema>>;
   export let supabase: SupabaseClient;
-  const { form: formData, enhance, errors } = superFrm;
+  const { form: formData, enhance } = superFrm;
 </script>
 
 <AlertDialog.Root bind:open={deleteDialog}>
@@ -34,8 +34,9 @@
       <AlertDialog.Action
         on:click={async () => {
           await supabase.from("shortened_urls").delete().eq("id", id);
-          $invalidateUrlData = true;
-        }}>Continue
+          if (urlData) urlData.reset();
+        }}
+        >Continue
       </AlertDialog.Action>
     </AlertDialog.Footer>
   </AlertDialog.Content>
@@ -85,10 +86,11 @@
       on:click={() => {
         $editDialog = true;
         $storeId = id;
-      }}>Edit URL
+      }}
+      >Edit URL
     </DropdownMenu.Item>
     <DropdownMenu.Item on:click={() => (deleteDialog = true)}
-    >Delete shortened URL
+      >Delete shortened URL
     </DropdownMenu.Item>
   </DropdownMenu.Content>
 </DropdownMenu.Root>

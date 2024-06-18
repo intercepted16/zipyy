@@ -5,20 +5,18 @@
   import { invalidate } from "$app/navigation";
   import { ModeWatcher } from "mode-watcher";
   import Header from "$lib/components/Header.svelte";
-  import type { Database } from "$lib/types/supabase";
-
   export let data;
   let { supabase, session } = data;
   $: ({ supabase, session } = data);
 
   onNavigate((navigation) => {
-    // @ts-ignore
+    // @ts-expect-error startViewTransition is a defined type
     if (!document.startViewTransition) {
       return;
     }
 
     return new Promise((resolve) => {
-      // @ts-ignore
+      // @ts-expect-error startViewTransition is a defined type
       document.startViewTransition(async () => {
         resolve();
         await navigation.complete;

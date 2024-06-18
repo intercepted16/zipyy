@@ -1,28 +1,31 @@
 <script lang="ts">
-  import { loginState } from "$store";
-  import { signupOrLogin } from "$store";
   import type { PageData } from "./$types";
-  import { loginSchema as schema } from "$lib/schema";
+  import { loginSchema as schema } from "$types/validation/schema";
   import * as Form from "$ui/form";
   import Github from "$lucide/github.svelte";
   import { Input } from "$ui/input";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-
   export let data: PageData;
+  const supabase = data.supabase;
+  let signupOrLogin: string = "login";
+  let loginState: number = 0;
 
   const form = superForm(data.form, {
     validators: zodClient(schema),
+    onSubmit: async ({ formData }) => {
+      formData.set("signupOrLogin", signupOrLogin);
+    },
     onUpdate: async (e) => {
-      if ($loginState == 1 || $errors.email || !$tainted?.email) return;
+      if (loginState == 1 || $errors.email || !$tainted?.email) return;
       e.cancel();
-      const userExists = (await (
-        await fetch(`/user/exists?email=${$formData.email}`)
-      ).json()) as boolean;
-      if (userExists) signupOrLogin.set("signup");
-      $loginState++;
+      const userExists = (await supabase.rpc("email_exists", { email: $formData.email })).data;
+      console.log(userExists);
+      if (!userExists) signupOrLogin = "signup";
+      loginState++;
       const el = document.querySelector("input[type='password']") as HTMLElement | null;
       if (el) observeAndFocus(el);
+      return 0;
     }
   });
 
@@ -53,7 +56,7 @@
       </h2>
     </div>
     <form method="POST" class="space-y-6" use:enhance>
-      <div class={$loginState === 1 ? "hidden" : ""}>
+      <div class={loginState === 1 ? "hidden" : ""}>
         <Form.Field {form} name="email">
           <Form.Control let:attrs>
             <Form.Label>Email address</Form.Label>
@@ -62,7 +65,7 @@
           </Form.Control>
         </Form.Field>
       </div>
-      <div class={$loginState === 0 ? "hidden" : ""}>
+      <div class={loginState === 0 ? "hidden" : ""}>
         <Form.Field {form} name="password">
           <Form.Control let:attrs>
             <Form.Label>Password</Form.Label>
@@ -73,17 +76,17 @@
       </div>
       <div class="flex items-center space-x-2">
         <Form.Button class="w-full"
-        >{$loginState === 0
-          ? "Next"
-          : $signupOrLogin === "signup"
-            ? "Signup for an account"
-            : "Login to your account"}
+          >{loginState === 0
+            ? "Next"
+            : signupOrLogin === "signup"
+              ? "Signup for an account"
+              : "Login to your account"}
         </Form.Button>
       </div>
       <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
-      >By continuing, you agree to Shortly"s <a
-        href="/terms"
-        class="text-white hover:text-primary-500">terms of use</a>
+        >By continuing, you agree to Shortly"s <a
+          href="/terms"
+          class="text-white hover:text-primary-500">terms of use</a>
         &
         <a href="/terms" class="text-white hover:text-primary-500">privacy policy</a>.</span>
     </form>

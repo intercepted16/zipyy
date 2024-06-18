@@ -1,9 +1,9 @@
-import type { Actions } from "./$types";
-import { superValidate } from "sveltekit-superforms/server";
-import { zod } from "sveltekit-superforms/adapters";
-import { shortenSchema as schema } from "$lib/schema";
-import { fail } from "@sveltejs/kit";
+import { shortenSchema as schema } from "$types/validation/schema";
 import { shortenedUrlsRoute } from "$store";
+import { fail } from "@sveltejs/kit";
+import { zod } from "sveltekit-superforms/adapters";
+import { superValidate } from "sveltekit-superforms/server";
+import type { Actions } from "./$types";
 
 export const load = async () => {
   const editForm = async () => {
@@ -34,6 +34,7 @@ export const actions: Actions = {
   edit: async ({ request, locals: { supabase } }) => {
     console.log("I am running");
     const formData = await request.formData();
+    console.log(formData.get("id"));
     const form = await superValidate(formData, zod(schema));
     if (!form.valid) return fail(400, { form });
     console.log(

@@ -1,54 +1,30 @@
 <script lang="ts">
-  import { Button } from "$ui/button";
   import LazyLoad from "$lib/components/LazyLoad";
-  import { shortenSchema as schema } from "$lib/schema";
-  import type { ActionData } from "./$types";
+  import { Input } from "$lib/components/ui/input";
+  import { shortenSchema as schema } from "$types/validation/schema";
+  import ChevronDown from "$lucide/chevron-down.svelte";
   import Github from "$lucide/github.svelte";
+  import { urlData } from "$store";
+  import { Button } from "$ui/button";
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import { Input } from "$lib/components/ui/input";
-  import ChevronDown from "$lucide/chevron-down.svelte";
-  import { invalidateUrlData } from "$store";
-  import type { urlData } from "$lib/types/database";
-
+  import type { ActionData } from "./$types";
+  import ShortenedUrlDialog from "$lib/components/ShortenedUrlDialog.svelte";
   export let data;
   export let form: ActionData;
-
-  let Form: typeof import("$ui/form");
 
   let { supabase, session } = data;
   $: ({ supabase, session } = data);
   let open: boolean;
-  let urlData: urlData[] = [];
   const superFrm = superForm(data.form, {
     validators: zodClient(schema),
     onUpdated: async ({ form }) => {
-      console.log(form);
       if (!form.valid) return 1;
-      Dialog = await import("$ui/dialog");
       open = true;
-      $invalidateUrlData = true;
+      if (urlData) await urlData.reset();
     }
   });
-
-  if (session?.user.id) {
-    onMount(() => {
-      const unsubscribe = invalidateUrlData.subscribe(async (value) => {
-        if (value) {
-          // fetch data and reset the invalidation indicator
-          urlData = (await supabase.from("shortened_urls").select().eq("user_id", session?.user.id))
-            .data as urlData[];
-          localStorage.setItem("urlData", JSON.stringify(urlData));
-          invalidateUrlData.set(false);
-        }
-      });
-
-      return unsubscribe;
-    });
-  }
-
   const { enhance, form: formData } = superFrm;
-  let Dialog: any;
 </script>
 
 <div class="flex flex-col items-center max-w-screen-xl mx-auto text-center">
@@ -72,7 +48,7 @@
           >Tailwind CSS</strong>
         &
         <strong class="font-medium text-slate-800 dark:text-white whitespace-nowrap"
-          >JavaScript</strong
+          >Typescript</strong
         >.
       </p>
       <div class="flex flex-wrap gap-3 md:justify-center md:space-x-3">
@@ -93,38 +69,16 @@
       <a
         href="https://bitly.com"
         class="mb-5 mr-5 text-black dark:text-white flex-center lg:mb-0 text-nowrap">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          width="48"
-          height="48"
-          viewBox="0 0 48 48"
-          id="bitly">
-          <defs>
-            <path id="a" d="M.014 48H48V0H.014z"></path>
-          </defs>
-          <g fill="none" fill-rule="evenodd">
-            <g transform="translate(-403 -952)">
-              <g transform="translate(403 952)">
-                <mask id="b" fill="#fff">
-                  <use xlink:href="#a"></use>
-                </mask>
-                <path
-                  class="dark:fill-white fill-black"
-                  d="M26.16 42.6c-2.694.048-4.658-.818-4.779-3.172-.045-.884-.03-1.824.013-2.392.26-3.44 2.666-5.915 5.04-6.39 2.954-.591 4.922.76 4.922 4.626 0 2.613-.726 7.25-5.196 7.329zM23.89 0C10.667 0 0 10.615 0 24.496c0 7.197 3.85 14.15 9.264 18.328 1.042.805 2.284.731 2.996.041.6-.58.55-1.98-.566-2.96-4.328-3.807-7.32-9.569-7.32-15.324 0-10.336 9.178-19.033 19.517-19.033 12.584 0 19.313 10.22 19.313 18.881 0 5.293-2.588 11.684-7.26 15.76.007-.019.97-1.913.97-5.603 0-6.28-3.98-9.683-8.597-9.683-3.343 0-5.344 1.195-6.706 2.31 0-2.559.085-7.336.085-7.336 0-3.154-1.104-5.678-4.955-5.733-2.228-.032-3.882.99-4.913 3.3-.372.868-.235 1.809.5 2.236.608.353 1.607.091 2.102-.57.33-.412.516-.5.803-.469.473.05.49.813.51 1.3.014.375.378 5.811.179 19.78 0 3.853 3.022 8.279 10.258 8.279 3.115 0 5.507-.87 8.982-2.845C40.452 42.149 48 35.482 48 24.206 48 10.116 36.59 0 23.89 0z"
-                  mask="url(#b)"></path>
-              </g>
-            </g>
-          </g>
-        </svg>
+        <img alt="bitly" class="grayscale w-10 h-10" src="/img/bitly.svg" />
       </a>
       <a
         href="#top"
         class="mb-5 mr-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400 opacity-80">
         <img alt="tinyurl" class="grayscale" src="/img/tinyurl.svg" />
       </a>
-      <a href="#top" class="mb-5 mr-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400">
-        <span class="ml-2 text-xl font-semibold">hi</span>
+      <a href="#top" class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400">
+        shorturl.at
+        <span class="ml-2 font-sans font-bold text-[40px]">shorturl.at</span>
       </a>
     </div>
   </div>
@@ -150,38 +104,7 @@
               </Form.Control>
             </Form.Field>
 
-            {#if Dialog}
-              <Dialog.Root bind:open>
-                <Dialog.Trigger>hi</Dialog.Trigger>
-                <Dialog.Content class="sm:max-w-[425px]">
-                  <Dialog.Header>
-                    <Dialog.Title>Your shortened URL</Dialog.Title>
-                  </Dialog.Header>
-                  <div class="grid gap-4 py-4">
-                    <div class="grid items-center gap-4">
-                      <span
-                        >Original: <a href={`https://${form?.original ?? "google.com"}`}
-                          >{form?.original ?? "google.com"}</a
-                        ></span>
-                    </div>
-                    <div class="grid items-center gap-4">
-                      <span
-                        >Shortened: <a href={`https://${form?.shortened ?? "sh.ps.ai/dma)F1"}`}
-                          >{form?.shortened ?? "sh.ps.ai/dma)F1"}</a
-                        ></span>
-                    </div>
-                  </div>
-                  <Dialog.Footer>
-                    <Button
-                      type="submit"
-                      class="mb-2 sm:mb-0 w-full"
-                      on:click={() => (open = false)}
-                      >Okay
-                    </Button>
-                  </Dialog.Footer>
-                </Dialog.Content>
-              </Dialog.Root>
-            {/if}
+            <ShortenedUrlDialog {form} {open} />
             <Form.Button class="w-full">Shorten</Form.Button>
           </form>
         </div>
@@ -190,14 +113,14 @@
   </div>
 </div>
 <!-- lazy load urlTable-->
-{#if session && $urlData.length > 0}
+{#if session && $urlData && $urlData.length > 0}
   <LazyLoad
     class="mt-4"
     options={{ unobserveOnEnter: true }}
     skeleton={{ length: 8, class: "h-8 sm:max-w-md flex mx-auto" }}>
     {#await import("$lib/components/UrlTable") then UrlTable}
       {#await data.editForm then editForm}
-        <UrlTable.default urlData={$urlData} superFrm={editForm} {supabase} />
+        <UrlTable.default superFrm={editForm} {supabase} />
       {/await}
     {/await}
   </LazyLoad>

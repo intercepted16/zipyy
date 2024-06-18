@@ -1,10 +1,9 @@
 import { createBrowserClient, parse, isBrowser } from "@supabase/ssr";
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public";
-import type { Database } from "$lib/types/supabase";
+import type { Database } from "$types/database/schema";
 
-export const load = async ({ fetch, data, depends, setHeaders }) => {
-  depends("supabase:auth");
-
+//@ts-expect-error depends implicitly has an any type
+export const load = async ({ fetch, data, depends }) => {
   const supabase = createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
     global: {
       fetch
@@ -20,6 +19,6 @@ export const load = async ({ fetch, data, depends, setHeaders }) => {
       }
     }
   });
-
+  depends("supabase:auth");
   return { supabase, session: data.session };
 };

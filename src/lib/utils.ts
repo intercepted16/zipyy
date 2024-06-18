@@ -2,7 +2,8 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
-
+import { writable } from "svelte/store";
+import { db } from "./db";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -54,3 +55,40 @@ export const flyAndScale = (
     easing: cubicOut
   };
 };
+
+export function allEqual(string: string) {
+  let stringAENew = "";
+  for (let i = 0; i < string.length; i++) {
+    if (string[0] == string[i]) {
+      stringAENew += string[i];
+    }
+  }
+  return stringAENew == string;
+}
+export async function indexedDBStore<T>(tableName: string, initialValue: () => Promise<T[]>) {
+  const table = db.table(tableName);
+  // if indexed db has it, use it
+  // else, use the initial value and set indexed db
+  let value: T[];
+  if ((await table.count()) > 0) {
+    value = await table.toArray();
+  } else {
+    value = await initialValue();
+    await table.bulkAdd(value);
+  }
+  const originalStore = writable(value);
+  const { subscribe, set, update } = originalStore;
+
+  const reset = async () => {
+    await table.clear();
+    set(await initialValue());
+  };
+
+  subscribe(async (value) => {
+    console.log(value);
+    await table.clear();
+    await table.bulkAdd(value);
+  });
+
+  return { subscribe, set, update, reset };
+}

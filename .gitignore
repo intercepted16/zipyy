@@ -16,3 +16,4 @@ vercel.json
 /.idea
 /.vscode
 /.wrangler
+/supabase
