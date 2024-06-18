@@ -12,11 +12,17 @@ const limiter = new RetryAfterRateLimiter({
 const cookieMethods = (event: RequestEvent): CookieMethods => {
   return {
     get: (key) => event.cookies.get(key),
+    /**
+     * Note: You have to add the `path` variable to the
+     * set and remove method due to sveltekit's cookie API
+     * requiring this to be set, setting the path to `/`
+     * will replicate previous/standard behaviour (https://kit.svelte.dev/docs/types#public-types-cookies)
+     */
     set: (key, value, options) => {
-      event.cookies.set(key, value, { ...options, path: "" });
+      event.cookies.set(key, value, { ...options, path: "/" });
     },
     remove: (key, options) => {
-      event.cookies.delete(key, { ...options, path: "" });
+      event.cookies.delete(key, { ...options, path: "/" });
     }
   };
 };
@@ -25,7 +31,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   if (!(process.env.NODE_ENV == "development")) {
     const status = await limiter.check(event);
     if (status.limited) {
-      let response = new Response(
+      const response = new Response(
         `You are being rate limited. Please try after ${status.retryAfter} seconds.`,
         {
           status: 429,
@@ -35,7 +41,6 @@ export const handle: Handle = async ({ event, resolve }) => {
       return response;
     }
   }
-  const old = performance.now();
   event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
     cookies: cookieMethods(event)
   });
@@ -65,8 +70,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     return userEmails.includes(email);
   };
-
-  console.log("Speed:", (performance.now() - old).toFixed(3) + "s");
 
   return resolve(event, {
     filterSerializedResponseHeaders(name) {
