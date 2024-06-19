@@ -48,7 +48,7 @@
     <DropdownMenu.Label>My Account</DropdownMenu.Label>
     <DropdownMenu.Separator />
     <DropdownMenu.Group>
-      <DropdownMenu.Item>
+      <DropdownMenu.Item href="/manage">
         {#await import("$lucide/settings.svelte") then Settings}
           <Settings.default class="mr-2 h-4 w-4" />
         {/await}

@@ -14,7 +14,7 @@
     "format": "prettier --write ."
   },
   "scriptsComments": {
-      "dev": "use a hacky workaround for not running supabase at startup (memory usage)"
+    "dev": "use a hacky workaround for not running supabase at startup (memory usage)"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -43,11 +43,11 @@
     "@supabase/supabase-js": "^2.43.4",
     "@sveltejs/adapter-cloudflare": "^4.4.0",
     "autoprefixer": "^10.4.17",
-    "bits-ui": "^0.19.6",
+    "bits-ui": "^0.21.10",
     "clsx": "^2.1.0",
     "dexie": "^4.0.7",
     "formsnap": "^0.5.1",
-    "lucide-svelte": "^0.321.0",
+    "lucide-svelte": "^0.395.0",
     "mode-watcher": "^0.2.1",
     "postcss-import": "^16.0.0",
     "shadcn-svelte": "latest",
