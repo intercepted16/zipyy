@@ -53,7 +53,7 @@
       </p>
       <div class="flex flex-wrap gap-3 md:justify-center md:space-x-3">
         <Button
-          href="/source"
+          href="/github"
           class="w-full btn md:btn-lg md:w-fit variant-ringed-surface hover:variant-filled-secondary">
           <Github />
           View on Github
@@ -76,7 +76,9 @@
         class="mb-5 mr-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400 opacity-80">
         <img alt="tinyurl" class="grayscale" src="/img/tinyurl.svg" />
       </a>
-      <a href="#top" class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400">
+      <a
+        href="#top"
+        class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400">
         shorturl.at
         <span class="ml-2 font-sans font-bold text-[40px]">shorturl.at</span>
       </a>

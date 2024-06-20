@@ -25,7 +25,7 @@
         <a href="/examples" class="transition-colors hover:text-foreground/80 text-foreground/60"
           >Examples</a>
         <a
-          href="/source"
+          href="/github"
           target="_blank"
           rel="noopener noreferrer"
           class="hidden transition-colors text-foreground/60 hover:text-foreground/80 lg:block"
@@ -56,7 +56,7 @@
           </div>
         {/if}
         <nav class="flex items-center">
-          <a href="/source" target="_blank" rel="noopener noreferrer">
+          <a href="/github" target="_blank" rel="noopener noreferrer">
             <div
               class="inline-flex items-center justify-center h-8 px-0 text-xs font-medium transition-colors rounded-md whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground w-9">
               {#await import("$lucide/github.svelte") then Github}
