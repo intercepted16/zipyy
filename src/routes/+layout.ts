@@ -1,24 +1,51 @@
-import { createBrowserClient, parse, isBrowser } from "@supabase/ssr";
+import { createBrowserClient, createServerClient, isBrowser, parse } from "@supabase/ssr";
+
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public";
-import type { Database } from "$types/database/schema";
 
-//@ts-expect-error depends implicitly has an any type
-export const load = async ({ fetch, data, depends }) => {
-  const supabase = createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-    global: {
-      fetch
-    },
-    cookies: {
-      get(key) {
-        if (!isBrowser()) {
-          return JSON.stringify(data.session);
-        }
+import type { LayoutLoad } from "./$types";
 
-        const cookie = parse(document.cookie);
-        return cookie[key];
-      }
-    }
-  });
+export const load: LayoutLoad = async ({ data, depends, fetch }) => {
+  /**
+   * Declare a dependency so the layout can be invalidated, for example, on
+   * session refresh.
+   */
   depends("supabase:auth");
-  return { supabase, session: data.session };
+
+  const supabase = isBrowser()
+    ? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        global: {
+          fetch
+        },
+        cookies: {
+          get(key) {
+            const cookie = parse(document.cookie);
+            return cookie[key];
+          }
+        }
+      })
+    : createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
+        global: {
+          fetch
+        },
+        cookies: {
+          get() {
+            return JSON.stringify(data.session);
+          }
+        }
+      });
+
+  /**
+   * It's fine to use `getSession` here, because on the client, `getSession` is
+   * safe, and on the server, it reads `session` from the `LayoutData`, which
+   * safely checked the session using `safeGetSession`.
+   */
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  return { session, supabase, user };
 };

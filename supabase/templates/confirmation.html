@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm your signup</title>
+  </head>
+  <body>
+    <h1>Confirm your signup</h1>
+    <p>Dear user,</p>
+    <p>
+      To confirm your signup, please verify your email address by clicking the link below. If you
+      did not initiate this change, please contact our support team immediately.
+    </p>
+    <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup"
+      >Verify your email</a
+    >
+    <p>Thank you for using our service!</p>
+  </body>
+</html>
