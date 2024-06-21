@@ -1,7 +1,7 @@
 import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from "$env/static/private";
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
 import { createServerClient, type CookieMethods } from "@supabase/ssr";
-import type { Handle, RequestEvent } from "@sveltejs/kit";
+import { redirect, type Handle, type RequestEvent } from "@sveltejs/kit";
 
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 
@@ -44,6 +44,13 @@ export const handle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
     cookies: cookieMethods(event)
   });
+
+  // for dev experience, check if on 127.0.0.1 and redirect to localhost instead for consistency
+  if (event.url.hostname === "127.0.0.1") {
+    const url = new URL(event.request.url);
+    url.hostname = "localhost";
+    return redirect(302, url.toString());
+  }
 
   /**
    * a little helper that is written for convenience so that instead

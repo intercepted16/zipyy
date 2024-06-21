@@ -10,11 +10,18 @@ export const load = async ({ url }) => {
     return await superValidate(zod(schema), { id: "editForm" });
   };
   const message = url.searchParams.get("message");
-  const error = url.searchParams.get("error");
+  const errorParam = url.searchParams.get("error");
+  const error = errorParam
+    ? {
+        error: errorParam,
+        description: url.searchParams.get("error_description")
+      }
+    : null;
+  const code = url.searchParams.get("code");
   return {
     form: await superValidate(zod(schema), { id: "createForm" }),
     editForm: editForm(),
-    pkceFlow: { message, error }
+    pkceFlow: { message, error, code }
   };
 };
 
