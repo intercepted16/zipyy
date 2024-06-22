@@ -1,38 +1,15 @@
-# create-svelte
+# zipyy
+Welcome to the source code of zipyy, a no-nonsense URL shortener built with SvelteKit, Tailwind, and TypeScript!
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+# Project Background
+This project started 7 months ago. Initially, it used Flask, a simple Python library for web applications. After experimenting with various tech stacks, I settled on the current setup, which provides the best developer experience. Highly recommended!
 
-## Creating a project
+# Why this stack?
+SvelteKit: It's like HTML on steroids.
 
-If you're seeing this, you've probably already done this step. Congrats!
+Tailwind: It has saved me countless hours of styling work.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+TypeScript: It has significantly reduced debugging time by catching errors early.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+# Cloning the Repository
+If you clone this repository, please remember to create a `.env.local` file, following the example of `.env.example`, with the Supabase environment variables.
