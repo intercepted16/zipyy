@@ -80,7 +80,7 @@
     text-decoration: none;
   }
 
-  a:not(:has(img, svg), [data-button-root])::before {
+  a:not(:has(img, svg), [data-button-root], .no-hover-underline)::before {
     content: "";
     @apply w-0 h-[2px] absolute bottom-0 left-0;
     background-color: #3490dc; /* Change this to your desired underline color */
@@ -88,9 +88,10 @@
     box-shadow: 0 30px 0 transparent; /* Add box-shadow for padding on hover */
   }
 
-  a:not(:has(img, svg), [data-button-root]):hover::before {
+  a:not(:has(img, svg), [data-button-root], .no-hover-underline):hover::before {
     @apply w-full;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -117,5 +118,5 @@
 }
 
 strong {
-  @apply font-medium text-slate-800 dark:text-white whitespace-nowrap
+  @apply font-medium text-slate-800 dark:text-white whitespace-nowrap;
 }

@@ -86,7 +86,7 @@
         rel="noopener noreferrer"
         class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400 no-hover-underline">
         <span
-          class="text-center box-border text-decoration-none font-black text-[36px] font-[asap,arial] tracking-[-1px] break-words text-shadow-[0px 2px 2px #383b3d]"
+          class="text-center box-border text-decoration-none font-black text-[36px] font-[asap,arial] tracking-[-1px] break-words text-shadow-[0px 2px 2px #383b3d] no-hover-underline"
           >shorturl.at</span>
       </a>
     </div>
