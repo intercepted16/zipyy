@@ -1,9 +1,9 @@
 import { writable, type Writable } from "svelte/store";
-import { dev } from "$app/environment";
 import type { Database, ShortenedUrls } from "$types/database/schema";
 import { createBrowserClient, isBrowser } from "@supabase/ssr";
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from "$env/static/public";
 import { indexedDBStore } from "$lib/utils";
+import { dev } from "$app/environment";
 
 const supabase = createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY);
 const session = (await supabase.auth.getSession()).data.session;
@@ -24,5 +24,6 @@ export const urlData: WritableReset<ShortenedUrls[]> | null =
 
 export const editDialog = writable(false);
 export const invalidateUrlData = writable(false);
-export const shortenedUrlsRoute = !dev ? "sh.ps.ai" : "/url";
+//TODO: once I buy a domain, use that instead of /url
+export const shortenedUrlsRoute = dev ? "localhost:3000/url" : "zipyy.pages.dev/url";
 export const id = writable(0);

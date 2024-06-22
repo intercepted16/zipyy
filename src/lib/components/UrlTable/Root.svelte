@@ -182,6 +182,7 @@
       tableBodyAttrs
     } = createUrlTable($urlData));
   }
+  const shortenedUrlsRouteProtocol = shortenedUrlsRoute.startsWith("localhost") ? "http" : "https";
 </script>
 
 <div
@@ -241,7 +242,7 @@
                         <Table.Cell class="[&:has([role=checkbox])]:pl-3" {...attrs}>
                           {#if cell.id === "shortened"}
                             <a
-                              href={`${shortenedUrlsRoute}/${
+                              href={`${shortenedUrlsRouteProtocol}://${shortenedUrlsRoute}/${
                                 // @ts-expect-error: Object is possibly "null".
                                 $urlData[row.id].shortened
                               }`}
