@@ -3,7 +3,6 @@
   import CircleCheck from "$lucide/circle-check.svelte";
   import type { Session } from "@supabase/supabase-js";
   export let session: Session | null;
-  $: console.log("session conf", session);
 </script>
 
 <div class="flex flex-col items-center justify-center my-36">

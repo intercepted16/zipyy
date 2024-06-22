@@ -7,23 +7,16 @@
 </script>
 
 <Dialog.Root bind:open>
-  <Dialog.Trigger>hi</Dialog.Trigger>
   <Dialog.Content class="sm:max-w-[425px]">
     <Dialog.Header>
       <Dialog.Title>Your shortened URL</Dialog.Title>
     </Dialog.Header>
     <div class="grid gap-4 py-4">
       <div class="grid items-center gap-4">
-        <span
-          >Original: <a href={`https://${form?.original ?? "google.com"}`}
-            >{form?.original ?? "google.com"}</a
-          ></span>
+        <span>Original: <a href={`https://${form?.original}`}>{form?.original}</a></span>
       </div>
       <div class="grid items-center gap-4">
-        <span
-          >Shortened: <a href={`https://${form?.shortened ?? "sh.ps.ai/dma)F1"}`}
-            >{form?.shortened ?? "sh.ps.ai/dma)F1"}</a
-          ></span>
+        <span>Shortened: <a href={`https://${form?.shortened}`}>{form?.shortened}</a></span>
       </div>
     </div>
     <Dialog.Footer>

@@ -85,10 +85,20 @@ export async function indexedDBStore<T>(tableName: string, initialValue: () => P
   };
 
   subscribe(async (value) => {
-    console.log(value);
     await table.clear();
     await table.bulkAdd(value);
   });
 
   return { subscribe, set, update, reset };
+}
+
+export function anchorSmoothScroll(event: MouseEvent) {
+  if (event.defaultPrevented) return;
+  const target = event.target as HTMLAnchorElement;
+  const hash = target.hash;
+  if (!hash) return;
+  const el = document.querySelector(hash);
+  if (!el) return;
+  event.preventDefault();
+  el.scrollIntoView({ behavior: "smooth" });
 }

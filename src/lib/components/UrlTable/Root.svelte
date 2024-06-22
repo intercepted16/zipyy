@@ -32,20 +32,20 @@
     onUpdated: async ({ form }) => {
       if (!form.valid) return 1;
       $editDialog = false;
-      urlData.reset();
+      await urlData.reset();
     }
   });
   export let supabase: SupabaseClient;
   function createUrlTable(urlData: ShortenedUrls[]) {
     const table = createTable(readable(urlData), {
-  sort: addSortBy({ disableMultiSort: true }),
-  page: addPagination(),
-  filter: addTableFilter({
-    fn: ({ filterValue, value }) => value.includes(filterValue)
-  }),
-  select: addSelectedRows(),
-  hide: addHiddenColumns()
-});
+      sort: addSortBy({ disableMultiSort: true }),
+      page: addPagination(),
+      filter: addTableFilter({
+        fn: ({ filterValue, value }) => value.includes(filterValue)
+      }),
+      select: addSelectedRows(),
+      hide: addHiddenColumns()
+    });
     const columns = table.createColumns([
       table.column({
         header: (_, { pluginStates }) => {
@@ -242,7 +242,7 @@
                           {#if cell.id === "shortened"}
                             <a
                               href={`${shortenedUrlsRoute}/${
-                                // @ts-ignore: Object is possibly "null".
+                                // @ts-expect-error: Object is possibly "null".
                                 $urlData[row.id].shortened
                               }`}
                               class="text-right font-medium">
@@ -251,7 +251,7 @@
                           {:else if cell.id === "original"}
                             <a
                               href={`https://${
-                                // @ts-ignore: Object is possibly "null".
+                                // @ts-expect-error: Object is possibly "null".
                                 $urlData[row.id].original
                               }`}
                               class="text-right font-medium">

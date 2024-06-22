@@ -1,22 +1,17 @@
 import { setError, superValidate } from "sveltekit-superforms/server";
 import { fail, redirect } from "@sveltejs/kit";
 import { loginSchema as schema } from "$types/validation/schema";
-import { get } from "svelte/store";
 import { zod } from "sveltekit-superforms/adapters";
 import type { AuthResponse } from "@supabase/supabase-js";
 
-export const load = async ({ parent, url, setHeaders, request }) => {
-  const old = performance.now();
-
+export const load = async ({ parent, url }) => {
   const session = (await parent()).session;
-  console.log(session);
 
   if (session) {
     throw redirect(303, "/");
   }
 
   const form = await superValidate(zod(schema));
-  console.log((performance.now() - old).toFixed(3) + "s");
 
   return {
     form,

@@ -42,17 +42,14 @@ export const actions: Actions = {
     };
   },
   edit: async ({ request, locals: { supabase } }) => {
-    console.log("I am running");
     const formData = await request.formData();
-    console.log(formData.get("id"));
+
     const form = await superValidate(formData, zod(schema));
     if (!form.valid) return fail(400, { form });
-    console.log(
-      await supabase
-        .from("shortened_urls")
-        .update({ original: formData.get("url") })
-        .eq("id", formData.get("id"))
-    );
+    await supabase
+      .from("shortened_urls")
+      .update({ original: formData.get("url") })
+      .eq("id", formData.get("id"));
     return { form };
   }
 };

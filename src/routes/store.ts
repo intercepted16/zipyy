@@ -9,7 +9,6 @@ const supabase = createBrowserClient<Database>(PUBLIC_SUPABASE_URL, PUBLIC_SUPAB
 const session = (await supabase.auth.getSession()).data.session;
 
 export const getUrlData = async () => {
-  console.log("ran");
   if (!session) return [];
   return (
     (await supabase.from("shortened_urls").select().eq("user_id", session?.user.id)).data ?? []

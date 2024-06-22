@@ -20,7 +20,7 @@
       if (loginState == 1 || $errors.email || !$tainted?.email) return;
       e.cancel();
       const userExists = (await supabase.rpc("email_exists", { email: $formData.email })).data;
-      console.log(userExists);
+
       if (!userExists) signupOrLogin = "signup";
       loginState++;
       const el = document.querySelector("input[type='password']") as HTMLElement | null;
@@ -114,7 +114,7 @@
         <button
           class="flex w-full items-center justify-center gap-1 rounded-md bg-[#24292F] px-3 py-1.5 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#24292F]"
           on:click={async () => {
-            const { error } = await data.supabase.auth.signInWithOAuth({
+            await data.supabase.auth.signInWithOAuth({
               provider: "github",
               options: {
                 redirectTo: `${data.url}/auth/callback`

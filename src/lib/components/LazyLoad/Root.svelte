@@ -2,7 +2,7 @@
   import { inview, type Options } from "svelte-inview";
   import { Skeleton } from "$ui/skeleton";
   export let options: Options = {};
-  export let inview_enter: Function = () => {};
+  export let inview_enter: () => void = () => {};
   let entered: boolean = false;
   let className = "";
   export { className as class };

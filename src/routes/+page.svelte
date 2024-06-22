@@ -2,7 +2,6 @@
   import LazyLoad from "$lib/components/LazyLoad";
   import { Input } from "$lib/components/ui/input";
   import { shortenSchema as schema } from "$types/validation/schema";
-  import ChevronDown from "$lucide/chevron-down.svelte";
   import Github from "$lucide/github.svelte";
   import { urlData } from "$store";
   import { Button } from "$ui/button";
@@ -14,6 +13,7 @@
   export let form: ActionData;
   import CircleX from "$lucide/circle-x.svelte";
   import EmailConfirmation from "$lib/components/EmailConfirmation.svelte";
+  import { anchorSmoothScroll } from "$lib/utils";
 
   let { supabase, session, pkceFlow } = data;
   $: ({ supabase, session, pkceFlow } = data);
@@ -27,8 +27,6 @@
     }
   });
   const { enhance, form: formData } = superFrm;
-  $: console.log(pkceFlow);
-  $: console.log("user updating", session);
 </script>
 
 {#if pkceFlow.message || pkceFlow.code}
@@ -48,12 +46,6 @@
   </div>
 {:else}
   <div class="flex flex-col items-center max-w-screen-xl mx-auto text-center">
-    <a
-      href="#top"
-      class="inline-flex items-center justify-between px-1 py-1 pl-4 pr-4 text-sm text-gray-700 bg-gray-100 rounded-full mb-7 dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700">
-      <span class="text-sm font-medium">Signup for all features.</span>
-      <ChevronDown class="w-4 h-4 mt-1 ml-2" />
-    </a>
     <div class="container flex flex-col items-center justify-center p-4 mx-auto text-center">
       <div class="relative z-[1] space-y-6 pb-24">
         <div class="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
@@ -63,7 +55,8 @@
           class="max-w-xl mb-8 text-xl font-normal text-center text-gray-500 lg:text-xl dark:text-gray-400">
           A no-nonsense, free, private URL shortener you can trust. No accounts, no limits, no
           bloat! Built using
-          <strong class="font-medium text-slate-800 dark:text-white whitespace-nowrap">Flask</strong
+          <strong class="font-medium text-slate-800 dark:text-white whitespace-nowrap"
+            >Svelte</strong
           >,
           <strong class="font-medium text-slate-800 dark:text-white whitespace-nowrap"
             >Tailwind CSS</strong>
@@ -75,11 +68,16 @@
         <div class="flex flex-wrap gap-3 md:justify-center md:space-x-3">
           <Button
             href="/github"
+            target="_blank"
+            rel="noopener noreferrer"
             class="w-full btn md:btn-lg md:w-fit variant-ringed-surface hover:variant-filled-secondary">
-            <Github />
+            <Github class="mr-1" />
             View on Github
           </Button>
-          <Button class="w-full btn md:btn-lg md:w-fit variant-filled-primary">Get started</Button>
+          <Button
+            class="w-full btn md:btn-lg md:w-fit variant-filled-primary"
+            href="#shorten"
+            on:click={anchorSmoothScroll}>Get started</Button>
         </div>
       </div>
     </div>
@@ -89,25 +87,33 @@
         class="flex flex-wrap mt-8 text-gray-500 sm:justify-between *:flex *:items-center *:justify-center *:opacity-50 [&>*:hover]:opacity-100">
         <a
           href="https://bitly.com"
+          target="_blank"
+          rel="noopener noreferrer"
           class="mb-5 mr-5 text-black dark:text-white flex-center lg:mb-0 text-nowrap">
           <img alt="bitly" class="grayscale w-10 h-10" src="/img/bitly.svg" />
         </a>
         <a
-          href="#top"
+          href="https://tinyurl.com"
+          target="_blank"
+          rel="noopener noreferrer"
           class="mb-5 mr-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400 opacity-80">
           <img alt="tinyurl" class="grayscale" src="/img/tinyurl.svg" />
         </a>
         <a
-          href="#top"
-          class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400">
-          shorturl.at
-          <span class="ml-2 font-sans font-bold text-[40px]">shorturl.at</span>
+          href="https://shorturl.at"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mb-5 mr-5 lg:mb-0 hover:none hover:text-gray-800 dark:hover:text-gray-400 no-hover-underline">
+          <span
+            class="text-center box-border text-decoration-none font-black text-[36px] font-[asap,arial] tracking-[-1px] break-words text-shadow-[0px 2px 2px #383b3d]"
+            >shorturl.at</span>
         </a>
       </div>
     </div>
   </div>
   <div
-    class="mx-auto rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700 dark:text-white dark:bg-gray-900">
+    class="mx-auto rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:border-gray-700 dark:text-white dark:bg-gray-900 mt-2"
+    id="shorten">
     <div class="p-6 space-y-4 sm:p-8 dark:text-white">
       <h1
         class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

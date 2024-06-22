@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Skeleton } from "$ui/skeleton";
   import { Button } from "$ui/button";
-  import { fade } from "svelte/transition";
   import { type Session, type SupabaseClient } from "@supabase/supabase-js";
   export let supabase: SupabaseClient;
   export let session: Session | null;
@@ -14,23 +13,6 @@
       <a href="/" class="flex items-center mr-6 space-x-2">
         <img src="/img/favicon.webp" alt="" class="w-8 h-8" />
         <span class="hidden font-bold sm:inline-block">shortly</span></a>
-      <nav class="flex items-center gap-6 text-sm">
-        <a href="/contact" class="transition-colors hover:text-foreground/80 text-foreground/60"
-          >Contact</a>
-        <a
-          href="/docs/components"
-          class="transition-colors hover:text-foreground/80 text-foreground/60">Components</a>
-        <a href="/themes" class="transition-colors hover:text-foreground/80 text-foreground/60"
-          >Themes</a>
-        <a href="/examples" class="transition-colors hover:text-foreground/80 text-foreground/60"
-          >Examples</a>
-        <a
-          href="/github"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="hidden transition-colors text-foreground/60 hover:text-foreground/80 lg:block"
-          >GitHub</a>
-      </nav>
     </div>
     {#await Promise.all( [import("$lib/components/Dropdowns/Theme/ThemeDropdown.svelte"), new Promise( (resolve) => setTimeout(resolve, 250) )] )}
       <div class="flex items-center justify-between flex-1 space-x-2 md:justify-end">
@@ -39,11 +21,6 @@
         {/each}
       </div>
     {:then [ThemeDropdown]}
-      <Button size="icon" variant="ghost" class="md:hidden">
-        {#await import("$lucide/align-left.svelte") then AlignLeft}
-          <AlignLeft.default />
-        {/await}
-        <span class="sr-only">Toggle Menu</span></Button>
       <div class="flex items-center justify-between flex-1 space-x-2 md:justify-end">
         {#if session}
           {#await import("$lib/components/Dropdowns/Account/AccountDropdown.svelte") then AccountDropdown}
@@ -63,15 +40,6 @@
                 <Github.default class="w-5 h-5" />
               {/await}
               <span class="sr-only">GitHub</span>
-            </div>
-          </a>
-          <a href="https://twitter.com/huntabyte" target="_blank" rel="noreferrer noopener">
-            <div
-              class="inline-flex items-center justify-center h-8 px-0 text-xs font-medium transition-colors rounded-md whitespace-nowrap focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground w-9">
-              {#await import("$lucide/twitter.svelte") then Twitter}
-                <Twitter.default class="w-5 h-5" />
-              {/await}
-              <span class="sr-only">X (formerly known as Twitter)</span>
             </div>
           </a>
           <svelte:component this={ThemeDropdown.default}></svelte:component>
