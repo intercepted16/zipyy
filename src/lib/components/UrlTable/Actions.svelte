@@ -7,7 +7,7 @@
   import { editDialog, id as storeId, shortenedUrlsRoute } from "$store";
   import * as Form from "$ui/form";
   import { Input } from "$ui/input";
-  import MoreHorizontal from "$lucide/ellipsis-vertical.svelte";
+  import MoreHorizontal from "$lucide/ellipsis.svelte";
   import SuperDebug, { type Infer, type SuperForm } from "sveltekit-superforms";
   import type { SupabaseClient } from "@supabase/supabase-js";
   import { urlData } from "$store";
