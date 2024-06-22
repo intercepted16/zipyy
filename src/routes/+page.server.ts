@@ -5,23 +5,13 @@ import { zod } from "sveltekit-superforms/adapters";
 import { superValidate } from "sveltekit-superforms/server";
 import type { Actions } from "./$types";
 
-export const load = async ({ url }) => {
+export const load = async () => {
   const editForm = async () => {
     return await superValidate(zod(schema), { id: "editForm" });
   };
-  const message = url.searchParams.get("message");
-  const errorParam = url.searchParams.get("error");
-  const error = errorParam
-    ? {
-        error: errorParam,
-        description: url.searchParams.get("error_description")
-      }
-    : null;
-  const code = url.searchParams.get("code");
   return {
     form: await superValidate(zod(schema), { id: "createForm" }),
-    editForm: editForm(),
-    pkceFlow: { message, error, code }
+    editForm: editForm()
   };
 };
 

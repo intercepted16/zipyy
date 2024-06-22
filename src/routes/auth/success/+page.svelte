@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { Button } from "$ui/button";
   import CircleCheck from "$lucide/circle-check.svelte";
-  import type { Session } from "@supabase/supabase-js";
-  export let session: Session | null;
+  import { Button } from "$ui/button";
+  export let data;
+  let { session } = data;
+  $: ({ session } = data);
 </script>
 
 <div class="flex flex-col items-center justify-center my-36">
