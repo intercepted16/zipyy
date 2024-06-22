@@ -1,0 +1,78 @@
+import type { ErrorCode } from "@supabase/auth-js/src/lib/error-codes";
+const errorsObject: Record<ErrorCode | string, string> = {
+  otp_expired: "The link is invalid or has expired. Please try again later.",
+  bad_code_verifier:
+    "The OTP code was invalid; your link may have been malformed. Please try verifying again or try again later.",
+  unexpected_failure: "There was an unexpected failure.",
+  //TODO: implement more error messages
+  validation_failed: "",
+  bad_json: "",
+  email_exists: "",
+  phone_exists: "",
+  bad_jwt: "",
+  not_admin: "",
+  no_authorization: "",
+  user_not_found: "",
+  session_not_found: "",
+  flow_state_not_found: "",
+  flow_state_expired: "",
+  signup_disabled: "",
+  user_banned: "",
+  provider_email_needs_verification:
+    "Your email requires verification. Please verify it and try again.",
+  invite_not_found: "",
+  bad_oauth_state: "",
+  bad_oauth_callback: "",
+  oauth_provider_not_supported: "",
+  unexpected_audience: "",
+  single_identity_not_deletable: "",
+  email_conflict_identity_not_deletable: "",
+  identity_already_exists: "",
+  email_provider_disabled: "",
+  phone_provider_disabled: "",
+  too_many_enrolled_mfa_factors: "",
+  mfa_factor_name_conflict: "",
+  mfa_factor_not_found: "",
+  mfa_ip_address_mismatch: "",
+  mfa_challenge_expired: "",
+  mfa_verification_failed: "",
+  mfa_verification_rejected: "",
+  insufficient_aal: "",
+  captcha_failed: "",
+  saml_provider_disabled: "",
+  manual_linking_disabled: "",
+  sms_send_failed: "",
+  email_not_confirmed: "Your email is not confirmed. Please confirm your email and try again.",
+  phone_not_confirmed: "",
+  reauth_nonce_missing: "",
+  saml_relay_state_not_found: "",
+  saml_relay_state_expired: "",
+  saml_idp_not_found: "",
+  saml_assertion_no_user_id: "",
+  saml_assertion_no_email: "",
+  user_already_exists: "The user already exists.",
+  sso_provider_not_found: "",
+  saml_metadata_fetch_failed: "",
+  saml_idp_already_exists: "",
+  sso_domain_already_exists: "",
+  saml_entity_id_mismatch: "",
+  conflict: "",
+  provider_disabled: "",
+  user_sso_managed: "",
+  reauthentication_needed: "",
+  same_password: "",
+  reauthentication_not_valid: "",
+  otp_disabled: "",
+  identity_not_found: "",
+  weak_password: "The password must be atleast 6 characters long.",
+  over_request_rate_limit: "",
+  over_email_send_rate_limit: "",
+  over_sms_send_rate_limit: ""
+};
+
+const errors: Map<ErrorCode | string, string> = new Map(
+  Object.entries(errorsObject) as Array<[ErrorCode, string]>
+);
+
+export { errorsObject, errors };
+export default errors;
