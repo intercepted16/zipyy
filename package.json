@@ -1,9 +1,9 @@
 {
-  "name": "shortly",
+  "name": "zipyy",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "supabase status 2>&1 | grep -q \"supabase_db_Shortly container is not running: exited\" && supabase stop > /dev/null; supabase start -x edge-runtime && vite dev",
+    "dev": "supabase status 2>&1 | grep -q \"supabase_db_zipyy container is not running: exited\" && supabase stop > /dev/null; supabase start -x edge-runtime && vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "vite build && wrangler pages deploy",

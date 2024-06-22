@@ -12,7 +12,7 @@
     <div class="hidden mr-4 md:flex">
       <a href="/" class="flex items-center mr-6 space-x-2">
         <img src="/img/favicon.webp" alt="" class="w-8 h-8" />
-        <span class="hidden font-bold sm:inline-block">shortly</span></a>
+        <span class="hidden font-bold sm:inline-block">zipyy</span></a>
     </div>
     {#await Promise.all( [import("$lib/components/Dropdowns/Theme/ThemeDropdown.svelte"), new Promise( (resolve) => setTimeout(resolve, 250) )] )}
       <div class="flex items-center justify-between flex-1 space-x-2 md:justify-end">
