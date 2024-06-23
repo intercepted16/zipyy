@@ -1,5 +1,5 @@
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-import adapter from "@sveltejs/adapter-cloudflare";
+import adapter from "@sveltejs/adapter-vercel";
 
 let checkOrigin;
 process.env.NODE_ENV === "development" ? (checkOrigin = false) : (checkOrigin = true);
