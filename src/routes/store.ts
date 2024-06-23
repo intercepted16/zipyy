@@ -10,9 +10,10 @@ const session = (await supabase.auth.getSession()).data.session;
 
 export const getUrlData = async () => {
   if (!session) return [];
-  return (
-    (await supabase.from("shortened_urls").select().eq("user_id", session?.user.id)).data ?? []
-  );
+  // Here, JWT verification is necessary, so we use the `getUser()` function.
+  const user = (await supabase.auth.getUser()).data.user;
+  // Ignore null errors, as we already checked for the existence of session.
+  return (await supabase.from("shortened_urls").select().eq("user_id", user!.id)).data ?? [];
 };
 
 interface WritableReset<T> extends Writable<T> {

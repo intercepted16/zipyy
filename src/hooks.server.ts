@@ -61,6 +61,11 @@ export const handle: Handle = async ({ event, resolve }) => {
     cookies: cookieMethods(event)
   });
 
+  event.locals.getSession = async () => {
+    return (await event.locals.supabase.auth.getSession()).data.session;
+  };
+
+  // Can only be used in a secure server context
   event.locals.userExists = async (email: string) => {
     const supabaseAdmin = createServerClient(
       PUBLIC_SUPABASE_URL,
@@ -74,35 +79,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     return userEmails.includes(email);
   };
-
-  /**
-   * Unlike `supabase.auth.getSession()`, which returns the session _without_
-   * validating the JWT, this function also calls `getUser()` to validate the
-   * JWT before returning the session.
-   */
-  event.locals.safeGetSession = async () => {
-    const {
-      data: { session }
-    } = await event.locals.supabase.auth.getSession();
-    if (!session) {
-      return { session: null, user: null };
-    }
-
-    const {
-      data: { user },
-      error
-    } = await event.locals.supabase.auth.getUser();
-    if (error) {
-      // JWT validation has failed
-      return { session: null, user: null };
-    }
-
-    return { session, user };
-  };
-
-  const { session, user } = await event.locals.safeGetSession();
-  event.locals.session = session;
-  event.locals.user = user;
 
   return resolve(event, {
     filterSerializedResponseHeaders(name) {

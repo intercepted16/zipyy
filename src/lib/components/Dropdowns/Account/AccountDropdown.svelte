@@ -4,6 +4,7 @@
   import { type Session, type SupabaseClient } from "@supabase/supabase-js";
   import type { Database } from "$types/database/schema";
 
+  // JWT verification is not required, all we're doing is displaying the user's email.
   export let session: Session | null;
   export let supabase: SupabaseClient<Database>;
   let hover: boolean = false;

@@ -5,7 +5,7 @@ declare global {
     interface Locals {
       supabase: SupabaseClient;
       supabaseAdmin: SupabaseClient;
-      safeGetSession: () => Promise<{ session: Session | null; user: User | null }>;
+      getSession: () => Promise<Session | null>;
       session: Session | null;
       user: User | null;
       userExists(email: string): Promise<boolean>;
