@@ -71,14 +71,14 @@
         target="_blank"
         rel="noopener noreferrer"
         class="mb-5 mr-5 text-black dark:text-white flex-center lg:mb-0 text-nowrap">
-        <img alt="bitly" class="grayscale w-10 h-10" src="/img/bitly.svg" />
+        <img alt="bitly" class="grayscale w-10 h-10" src="/img/bitly.webp" />
       </a>
       <a
         href="https://tinyurl.com"
         target="_blank"
         rel="noopener noreferrer"
         class="mb-5 mr-5 lg:mb-0 hover:text-gray-800 dark:hover:text-gray-400 opacity-80">
-        <img alt="tinyurl" class="grayscale" src="/img/tinyurl.svg" />
+        <img alt="tinyurl" class="grayscale" src="/img/tinyurl.webp" />
       </a>
       <a
         href="https://shorturl.at"
