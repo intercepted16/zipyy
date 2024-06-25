@@ -21,14 +21,18 @@ export const actions: Actions = {
     let updateType = "";
 
     if (form.data.email) {
-      //TODO: add an email changed confirmation page, handle errors
-      await supabase.auth.updateUser({ email: form.data.email });
+      const { error } = await supabase.auth.updateUser({ email: form.data.email });
+      if (error) {
+        return redirect(303, `/auth/error?error=${JSON.stringify(error)}`);
+      }
       updateType = "email_change";
     }
 
     if (form.data.password) {
-      //TODO: add a password changed confirmation page, handle errors
-      await supabase.auth.updateUser({ password: form.data.password });
+      const { error } = await supabase.auth.updateUser({ password: form.data.password });
+      if (error) {
+        return redirect(303, `/auth/error?error=${JSON.stringify(error)}`);
+      }
       updateType = updateType === "email_change" ? "multiple" : "recovery";
     }
 
