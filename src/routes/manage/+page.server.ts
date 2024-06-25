@@ -11,8 +11,23 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
   default: async (event) => {
-    const { supabase } = event.locals;
-    const form = await superValidate(event, yup(accountFormSchema));
+    const formData = await event.request.formData();
+    const { supabase, supabaseAdmin } = event.locals;
+    if (formData.get("delete")) {
+      console.log("running delete");
+      // We *must* verify the JWT token, else anyone can delete ANY account
+      // As we are on the /manage route, we can assume the user is authenticated.
+      const { data, error } = await supabaseAdmin.auth.admin.deleteUser(
+        (await supabase.auth.getUser()).data.user!.id
+      );
+      console.log(data, error);
+      if (error) {
+        return redirect(303, `/auth/error?error=${JSON.stringify(error)}`);
+      }
+      await supabase.auth.signOut();
+      return redirect(303, "/");
+    }
+    const form = await superValidate(formData, yup(accountFormSchema));
     if (!form.valid) {
       return fail(400, {
         form
