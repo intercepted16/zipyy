@@ -5,14 +5,14 @@
   import Github from "$lucide/github.svelte";
   import { Input } from "$ui/input";
   import { superForm } from "sveltekit-superforms";
-  import { zodClient } from "sveltekit-superforms/adapters";
+  import { yupClient } from "sveltekit-superforms/adapters";
   export let data: PageData;
   const supabase = data.supabase;
   let signupOrLogin: string = "login";
   let loginState: number = 0;
 
   const form = superForm(data.form, {
-    validators: zodClient(schema),
+    validators: yupClient(schema),
     onSubmit: async ({ formData }) => {
       formData.set("signupOrLogin", signupOrLogin);
     },

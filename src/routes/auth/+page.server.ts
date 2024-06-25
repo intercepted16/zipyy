@@ -1,7 +1,7 @@
 import { setError, superValidate } from "sveltekit-superforms/server";
 import { fail, redirect } from "@sveltejs/kit";
 import { loginSchema as schema } from "$types/validation/schema";
-import { zod } from "sveltekit-superforms/adapters";
+import { yup } from "sveltekit-superforms/adapters";
 import type { AuthResponse } from "@supabase/supabase-js";
 import type { ErrorCode } from "@supabase/auth-js/src/lib/error-codes";
 import errors from "$lib/errors";
@@ -14,7 +14,7 @@ export const load = async ({ url, locals: { supabase } }) => {
     throw redirect(303, "/");
   }
 
-  const form = await superValidate(zod(schema));
+  const form = await superValidate(yup(schema));
 
   return {
     form,
@@ -24,7 +24,7 @@ export const load = async ({ url, locals: { supabase } }) => {
 export const actions = {
   default: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
-    const form = await superValidate(formData, zod(schema));
+    const form = await superValidate(formData, yup(schema));
     const signupOrLogin: string | null = formData.get("signupOrLogin") as string | null;
     let redirectTo: string = "";
     if (!form.valid) {

@@ -6,7 +6,7 @@
   import { urlData } from "$store";
   import { Button } from "$ui/button";
   import { superForm } from "sveltekit-superforms";
-  import { zodClient } from "sveltekit-superforms/adapters";
+  import { yupClient } from "sveltekit-superforms/adapters";
   import type { ActionData } from "./$types";
   import ShortenedUrlDialog from "$lib/components/ShortenedUrlDialog.svelte";
   export let data;
@@ -17,7 +17,7 @@
   $: ({ supabase, session } = data);
   let open: boolean;
   const superFrm = superForm(data.form, {
-    validators: zodClient(schema),
+    validators: yupClient(schema),
     onUpdated: async ({ form }) => {
       if (!form.valid) return 1;
       open = true;

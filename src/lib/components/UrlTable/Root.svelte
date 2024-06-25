@@ -18,14 +18,14 @@
   import { superForm, type SuperForm } from "sveltekit-superforms";
   import type { SupabaseClient } from "@supabase/supabase-js";
   import type { Infer, SuperValidated } from "sveltekit-superforms";
-  import { zodClient } from "sveltekit-superforms/adapters";
+  import { yupClient } from "sveltekit-superforms/adapters";
   import ArrowUpDown from "$lucide/arrow-up.svelte";
   import { Input } from "$ui/input";
   import type { ShortenedUrls } from "$types/database/schema";
   import { urlData } from "$store";
   export let superFrm: SuperValidated<Infer<typeof schema>>;
   const editForm = superForm(superFrm, {
-    validators: zodClient(schema),
+    validators: yupClient(schema),
     onSubmit: ({ formData }) => {
       formData.set("id", $id.toString());
     },

@@ -61,19 +61,20 @@ export const handle: Handle = async ({ event, resolve }) => {
     cookies: cookieMethods(event)
   });
 
+  event.locals.supabaseAdmin = createServerClient(
+    PUBLIC_SUPABASE_URL,
+    PRIVATE_SUPABASE_SERVICE_ROLE_KEY,
+    {
+      cookies: cookieMethods(event)
+    }
+  );
+
   event.locals.getSession = async () => {
     return (await event.locals.supabase.auth.getSession()).data.session;
   };
 
   // Can only be used in a secure server context
   event.locals.userExists = async (email: string) => {
-    const supabaseAdmin = createServerClient(
-      PUBLIC_SUPABASE_URL,
-      PRIVATE_SUPABASE_SERVICE_ROLE_KEY,
-      {
-        cookies: cookieMethods(event)
-      }
-    );
     const { data } = await supabaseAdmin.auth.admin.listUsers();
     const userEmails = data.users.map((user) => user.email);
 
