@@ -1,6 +1,20 @@
 <script lang="ts">
   import CircleCheck from "$lucide/circle-check.svelte";
   import { Button } from "$ui/button";
+  import { page } from "$app/stores";
+  export let data;
+  let { session } = data;
+  $: ({ session } = data);
+  type pendingTypes = "confirmation" | "email_change" | "recovery";
+  const pendingType: pendingTypes =
+    ($page.url.searchParams.get("type") as pendingTypes) ?? "confirmation";
+  const pendingMessages = new Map<pendingTypes, string>(
+    Object.entries({
+      confirmation: "creating your account",
+      email_change: `changing your email`,
+      recovery: "updating your password"
+    }) as [pendingTypes, string][]
+  );
 </script>
 
 <div class="flex flex-col items-center justify-center my-36">
@@ -14,8 +28,8 @@
       When 'new_email' is not empty, it indicates that the
       user has requested to change their email and it has not been completed yet.
 -->
-    Nearly there! To finish creating your account, simply verify the email address you provided when
-    you signed up. Then, attempt to login.
+    Nearly there! To finish {pendingMessages.get(pendingType)}, simply verify the email address you
+    provided earlier. Then, attempt to login.
   </p>
   <Button class="btn md:btn-lg md:w-fit variant-filled-primary" href="/">Go home</Button>
 </div>
