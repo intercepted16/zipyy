@@ -1,9 +1,8 @@
 <script lang="ts">
   import AccountForm from "$lib/components/AccountForm.svelte";
-  import type { PageData } from "./$types.js";
   import { Separator } from "$ui/separator/index.js";
 
-  export let data: PageData;
+  export let data;
 </script>
 
 <div class="space-y-6">

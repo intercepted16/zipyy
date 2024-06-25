@@ -1,24 +1,15 @@
-<script lang="ts" context="module">
-  import { z } from "zod";
-
-  export const accountFormSchema = z.object({
-    email: z.string().email()
-  });
-
-  export type AccountFormSchema = typeof accountFormSchema;
-</script>
-
 <script lang="ts">
   import SuperDebug, { type Infer, type SuperValidated, superForm } from "sveltekit-superforms";
-  import { zodClient } from "sveltekit-superforms/adapters";
+  import { yupClient } from "sveltekit-superforms/adapters";
   import * as Form from "$ui/form/index.js";
   import { Input } from "$ui/input/index.js";
   import { browser } from "$app/environment";
+  import { accountFormSchema } from "$types/validation/schema";
 
-  export let data: SuperValidated<Infer<AccountFormSchema>>;
+  export let data: SuperValidated<Infer<typeof accountFormSchema>>;
 
   const form = superForm(data, {
-    validators: zodClient(accountFormSchema)
+    validators: yupClient(accountFormSchema)
   });
   const { form: formData, enhance } = form;
 </script>
@@ -28,6 +19,20 @@
     <Form.Control let:attrs>
       <Form.Label>Email</Form.Label>
       <Input {...attrs} bind:value={$formData.email} />
+    </Form.Control>
+    <Form.FieldErrors />
+  </Form.Field>
+  <Form.Field {form} name="password">
+    <Form.Control let:attrs>
+      <Form.Label>Password</Form.Label>
+      <Input {...attrs} bind:value={$formData.password} />
+    </Form.Control>
+    <Form.FieldErrors />
+  </Form.Field>
+  <Form.Field {form} name="confirmPassword">
+    <Form.Control let:attrs>
+      <Form.Label>Confirm password</Form.Label>
+      <Input {...attrs} bind:value={$formData.confirmPassword} />
     </Form.Control>
     <Form.FieldErrors />
   </Form.Field>
