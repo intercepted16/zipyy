@@ -14,6 +14,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
    */
   const redirectTo = new URL(url);
   redirectTo.pathname = next;
+  redirectTo.searchParams.append("type", type ?? "");
   redirectTo.searchParams.delete("token_hash");
   redirectTo.searchParams.delete("type");
   redirectTo.searchParams.delete("message");
@@ -23,6 +24,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (!error) {
       redirectTo.searchParams.delete("next");
+      redirectTo.searchParams.append("type", type ?? "");
       return redirect(303, redirectTo);
     } else {
       redirectTo.searchParams.append("error", JSON.stringify(error));
