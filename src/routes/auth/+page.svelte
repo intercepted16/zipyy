@@ -82,8 +82,9 @@
         </Form.Button>
       </div>
       <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
-        >By continuing, you agree that your account (currently) <span
-          class="text-white hover:text-primary-500">cannot be deleted through the UI</span
+        >By continuing, you agree to use the Software according to the <a
+          href="https://raw.githubusercontent.com/intercepted16/zipyy/master/LICENSE"
+          class="text-white">MIT license</a
         >.
       </span>
     </form>
