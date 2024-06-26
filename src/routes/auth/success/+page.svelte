@@ -1,9 +1,22 @@
 <script lang="ts">
+  import { page } from "$app/stores";
   import CircleCheck from "$lucide/circle-check.svelte";
   import { Button } from "$ui/button";
+  import { type EmailOtpType } from "@supabase/supabase-js";
   export let data;
   let { session } = data;
   $: ({ session } = data);
+  const successType: EmailOtpType =
+    ($page.url.searchParams.get("type") as EmailOtpType) ?? "confirmation";
+  const successMessages = new Map<EmailOtpType, string>(
+    Object.entries({
+      signup: `Your account has been created successfully.`,
+      confirmation: "Your email has been verified successfully.",
+      // Render based on new email: "verified" if one email is verified, "updated" if both are verified (new_email is empty).
+      email_change: `Your email has been ${session?.user.new_email ? "verified" : "updated"} successfully.`,
+      recovery: "Your password has been updated successfully."
+    }) as [EmailOtpType, string][]
+  );
 </script>
 
 <div class="flex flex-col items-center justify-center my-36">
@@ -19,9 +32,8 @@
       When 'new_email' is not empty, it indicates that the
       user has requested to change their email and it has not been completed yet.
 -->
-    Your email has been verified. {!session?.user.new_email
-      ? "Please attempt the previous action."
-      : ""}
+    {successMessages.get(successType)}
+    {!session?.user.new_email ? "Please attempt the previous action." : ""}
     {#if session?.user.new_email}
       Please proceed to
       <span class="font-bold text-white">verify the other email.</span>

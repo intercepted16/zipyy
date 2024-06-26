@@ -1,10 +1,8 @@
 <script lang="ts" context="module">
-  import { z } from "zod";
+  import { object, mixed } from "yup";
 
-  export const appearanceFormSchema = z.object({
-    theme: z.enum(["light", "dark"], {
-      required_error: "Please select a theme."
-    })
+  export const appearanceFormSchema = object({
+    theme: mixed<"light" | "dark">().oneOf(["light", "dark"]).required("Please select a theme.")
   });
 
   export type AppearanceFormSchema = typeof appearanceFormSchema;
@@ -12,7 +10,7 @@
 
 <script lang="ts">
   import SuperDebug, { type Infer, type SuperValidated, superForm } from "sveltekit-superforms";
-  import { zodClient } from "sveltekit-superforms/adapters";
+  import { yupClient } from "sveltekit-superforms/adapters";
   import { browser } from "$app/environment";
   import * as Form from "$ui/form/index.js";
   import * as RadioGroup from "$ui/radio-group/index.js";
@@ -21,7 +19,7 @@
   import { setMode } from "mode-watcher";
 
   const form = superForm(data, {
-    validators: zodClient(appearanceFormSchema),
+    validators: yupClient(appearanceFormSchema),
     onUpdate: ({ form }) => {
       setMode(form.data.theme);
     }
