@@ -34,6 +34,8 @@
 -->
     {successMessages.get(successType)}
     {!session?.user.new_email ? "Please attempt the previous action." : ""}
+    {successMessages.get(successType)}
+    {!session?.user.new_email ? "Please attempt the previous action." : ""}
     {#if session?.user.new_email}
       Please proceed to
       <span class="font-bold text-white">verify the other email.</span>
