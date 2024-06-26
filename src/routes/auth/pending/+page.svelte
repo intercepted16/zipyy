@@ -2,18 +2,16 @@
   import CircleCheck from "$lucide/circle-check.svelte";
   import { Button } from "$ui/button";
   import { page } from "$app/stores";
-  export let data;
-  let { session } = data;
-  $: ({ session } = data);
-  type pendingTypes = "confirmation" | "email_change" | "recovery";
-  const pendingType: pendingTypes =
-    ($page.url.searchParams.get("type") as pendingTypes) ?? "confirmation";
-  const pendingMessages = new Map<pendingTypes, string>(
+  import { type EmailOtpType } from "@supabase/supabase-js";
+  const pendingType: EmailOtpType =
+    ($page.url.searchParams.get("type") as EmailOtpType) ?? "confirmation";
+  const pendingMessages = new Map<EmailOtpType, string>(
     Object.entries({
+      signup: "creating your account",
       confirmation: "creating your account",
       email_change: `changing your email`,
       recovery: "updating your password"
-    }) as [pendingTypes, string][]
+    }) as [EmailOtpType, string][]
   );
 </script>
 

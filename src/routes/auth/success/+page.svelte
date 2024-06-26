@@ -10,7 +10,8 @@
     ($page.url.searchParams.get("type") as EmailOtpType) ?? "confirmation";
   const successMessages = new Map<EmailOtpType, string>(
     Object.entries({
-      signup: "Your email has been verified successfully.",
+      signup: `Your account has been created successfully.`,
+      confirmation: "Your email has been verified successfully.",
       // Render based on new email: "verified" if one email is verified, "updated" if both are verified (new_email is empty).
       email_change: `Your email has been ${session?.user.new_email ? "verified" : "updated"} successfully.`,
       recovery: "Your password has been updated successfully."
