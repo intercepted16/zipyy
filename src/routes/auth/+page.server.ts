@@ -1,6 +1,6 @@
 import { setError, superValidate } from "sveltekit-superforms/server";
 import { fail, redirect } from "@sveltejs/kit";
-import { loginSchema as schema } from "$types/validation/schema";
+import { loginSchema, resetPasswordSchema } from "$types/validation/schema";
 import { yup } from "sveltekit-superforms/adapters";
 import type { AuthResponse } from "@supabase/supabase-js";
 import type { ErrorCode } from "@supabase/auth-js/src/lib/error-codes";
@@ -14,17 +14,19 @@ export const load = async ({ url, locals: { session } }) => {
     return redirect(303, "/");
   }
 
-  const form = await superValidate(yup(schema));
+  const loginForm = await superValidate(yup(loginSchema));
+  const resetPasswordForm = await superValidate(yup(resetPasswordSchema));
 
   return {
-    form,
+    loginForm,
+    resetPasswordForm,
     url: url.origin
   };
 };
 export const actions = {
-  default: async ({ request, locals: { supabase } }) => {
+  login: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
-    const form = await superValidate(formData, yup(schema));
+    const form = await superValidate(formData, yup(loginSchema));
     const signupOrLogin: string | null = JSON.parse(formData.get("signupOrLogin") as string);
     let redirectTo: string = "";
     if (!form.valid) {
@@ -62,5 +64,21 @@ export const actions = {
         return { form };
     }
     throw redirect(301, redirectTo);
+  },
+  resetPassword: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const form = await superValidate(formData, yup(resetPasswordSchema));
+    if (!form.valid) {
+      return fail(400, { form });
+    }
+
+    const response = await supabase.auth.resetPasswordForEmail(form.data.email);
+    if (response.error) {
+      const error = errors.get(response.error.code as ErrorCode) ?? "An unexpected error occurred.";
+      return setError(form, "email", error);
+    }
+    const redirectTo = new URL("/auth/pending", request.url);
+    redirectTo.searchParams.set("type", "recovery");
+    return redirect(303, redirectTo);
   }
 };

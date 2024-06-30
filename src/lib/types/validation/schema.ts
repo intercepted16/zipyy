@@ -16,6 +16,10 @@ const userSchema = yup.object({
   email: yup.string().email("Please enter a valid email address.").notRequired()
 });
 
+export const resetPasswordSchema = yup.object({
+  email: yup.string().email("Please enter a valid email address.").required()
+});
+
 export const passwordSchema = yup.object({
   password: yup.string().min(6, "Password must be at least 6 characters.").notRequired(),
   confirmPassword: yup

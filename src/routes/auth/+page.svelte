@@ -1,22 +1,19 @@
 <script lang="ts">
   import type { PageData } from "./$types";
-  import { loginSchema as schema } from "$types/validation/schema";
+  import { loginSchema, resetPasswordSchema } from "$types/validation/schema";
   import * as Form from "$ui/form";
   import Github from "$lucide/github.svelte";
   import { superForm } from "sveltekit-superforms";
   import { yupClient } from "sveltekit-superforms/adapters";
-  import { buttonVariants } from "$lib/components/ui/button/index.js";
-  import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { Label } from "$lib/components/ui/label/index.js";
+  import ResetPasswordDialog from "$lib/components/ResetPasswordDialog.svelte";
   export let data: PageData;
   const supabase = data.supabase;
   let signupOrLogin: string;
   let loginState: number = 0;
-  $: console.log(signupOrLogin);
-
-  const form = superForm(data.form, {
-    validators: yupClient(schema),
+  let resetDialogOpen: boolean = false;
+  const loginForm = superForm(data.loginForm, {
+    validators: yupClient(loginSchema),
     onSubmit: async ({ formData }) => {
       formData.set("signupOrLogin", JSON.stringify(signupOrLogin ?? null));
     },
@@ -34,7 +31,16 @@
     }
   });
 
-  const { enhance, form: formData, tainted, errors } = form;
+  const resetPasswordForm = superForm(data.resetPasswordForm, {
+    validators: yupClient(resetPasswordSchema),
+
+    onUpdated: async ({ form }) => {
+      if (!form.valid) return 1;
+      resetDialogOpen = true;
+    }
+  });
+
+  const { enhance, form: formData, tainted, errors } = loginForm;
 
   const observeAndFocus = (element: HTMLElement) => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -58,9 +64,9 @@
         Login or signup in seconds
       </h2>
     </div>
-    <form method="POST" class="space-y-6" use:enhance>
+    <form method="POST" class="space-y-6" action="?/login" use:enhance>
       <div class={loginState === 1 ? "hidden" : ""}>
-        <Form.Field {form} name="email">
+        <Form.Field form={loginForm} name="email">
           <Form.Control let:attrs>
             <Form.Label>Email address</Form.Label>
             <Input autofocus={true} {...attrs} bind:value={$formData.email} />
@@ -69,7 +75,7 @@
         </Form.Field>
       </div>
       <div class={loginState === 0 ? "hidden" : ""}>
-        <Form.Field {form} name="password">
+        <Form.Field form={loginForm} name="password">
           <Form.Control let:attrs>
             <Form.Label>Password</Form.Label>
             <Input type="password" {...attrs} bind:value={$formData.password} />
@@ -88,32 +94,7 @@
       </div>
       <div class="flex flex-col !mt-2">
         {#if signupOrLogin == "login"}
-          <AlertDialog.Root>
-            <AlertDialog.Trigger class={buttonVariants({ variant: "link" })}
-              >Forgot your password?</AlertDialog.Trigger>
-            <AlertDialog.Content class="sm:max-w-[475px]">
-              <AlertDialog.Header>
-                <AlertDialog.Title>Reset your password</AlertDialog.Title>
-                <AlertDialog.Description>
-                  Edit your password here. We'll send a reset link to your email.
-                </AlertDialog.Description>
-              </AlertDialog.Header>
-              <div class="grid gap-4 py-4">
-                <div class="grid grid-cols-4 items-center gap-4">
-                  <Label for="name" class="text-right">Email address</Label>
-                  <Input id="email" value={$formData.email} class="col-span-3" />
-                </div>
-              </div>
-              <AlertDialog.Footer>
-                <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-                <AlertDialog.Action on:click={() => {
-                  supabase.auth.api.resetPasswordForEmail($formData.email);
-                }}
-                  >Reset password</AlertDialog.Action>
-                }}>Continue</AlertDialog.Action>
-              </AlertDialog.Footer>
-            </AlertDialog.Content>
-          </AlertDialog.Root>
+          <ResetPasswordDialog {resetPasswordForm} open={resetDialogOpen} />
         {/if}
         <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
           >By continuing, you agree to use the Software according to the <a
