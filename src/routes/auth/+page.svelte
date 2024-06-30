@@ -3,25 +3,30 @@
   import { loginSchema as schema } from "$types/validation/schema";
   import * as Form from "$ui/form";
   import Github from "$lucide/github.svelte";
-  import { Input } from "$ui/input";
   import { superForm } from "sveltekit-superforms";
   import { yupClient } from "sveltekit-superforms/adapters";
+  import { buttonVariants } from "$lib/components/ui/button/index.js";
+  import * as AlertDialog from "$lib/components/ui/alert-dialog";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Label } from "$lib/components/ui/label/index.js";
   export let data: PageData;
   const supabase = data.supabase;
-  let signupOrLogin: string = "login";
+  let signupOrLogin: string;
   let loginState: number = 0;
+  $: console.log(signupOrLogin);
 
   const form = superForm(data.form, {
     validators: yupClient(schema),
     onSubmit: async ({ formData }) => {
-      formData.set("signupOrLogin", signupOrLogin);
+      formData.set("signupOrLogin", JSON.stringify(signupOrLogin ?? null));
     },
     onUpdate: async (e) => {
       if (loginState == 1 || $errors.email || !$tainted?.email) return;
       e.cancel();
-      const userExists = (await supabase.rpc("email_exists", { email: $formData.email })).data;
+      const userExists = (await supabase.rpc("email_exists", { email: $formData.email }))
+        .data as boolean;
 
-      if (!userExists) signupOrLogin = "signup";
+      userExists ? (signupOrLogin = "login") : (signupOrLogin = "signup");
       loginState++;
       const el = document.querySelector("input[type='password']") as HTMLElement | null;
       if (el) observeAndFocus(el);
@@ -81,12 +86,42 @@
               : "Login to your account"}
         </Form.Button>
       </div>
-      <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
-        >By continuing, you agree to use the Software according to the <a
-          href="https://raw.githubusercontent.com/intercepted16/zipyy/master/LICENSE"
-          class="text-white">MIT license</a
-        >.
-      </span>
+      <div class="flex flex-col !mt-2">
+        {#if signupOrLogin == "login"}
+          <AlertDialog.Root>
+            <AlertDialog.Trigger class={buttonVariants({ variant: "link" })}
+              >Forgot your password?</AlertDialog.Trigger>
+            <AlertDialog.Content class="sm:max-w-[475px]">
+              <AlertDialog.Header>
+                <AlertDialog.Title>Reset your password</AlertDialog.Title>
+                <AlertDialog.Description>
+                  Edit your password here. We'll send a reset link to your email.
+                </AlertDialog.Description>
+              </AlertDialog.Header>
+              <div class="grid gap-4 py-4">
+                <div class="grid grid-cols-4 items-center gap-4">
+                  <Label for="name" class="text-right">Email address</Label>
+                  <Input id="email" value={$formData.email} class="col-span-3" />
+                </div>
+              </div>
+              <AlertDialog.Footer>
+                <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                <AlertDialog.Action on:click={() => {
+                  supabase.auth.api.resetPasswordForEmail($formData.email);
+                }}
+                  >Reset password</AlertDialog.Action>
+                }}>Continue</AlertDialog.Action>
+              </AlertDialog.Footer>
+            </AlertDialog.Content>
+          </AlertDialog.Root>
+        {/if}
+        <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
+          >By continuing, you agree to use the Software according to the <a
+            href="https://raw.githubusercontent.com/intercepted16/zipyy/master/LICENSE"
+            class="text-white">MIT license</a
+          >.
+        </span>
+      </div>
     </form>
     <div>
       <div class="relative mt-10">

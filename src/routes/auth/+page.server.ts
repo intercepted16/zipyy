@@ -25,7 +25,7 @@ export const actions = {
   default: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData();
     const form = await superValidate(formData, yup(schema));
-    const signupOrLogin: string | null = formData.get("signupOrLogin") as string | null;
+    const signupOrLogin: string | null = JSON.parse(formData.get("signupOrLogin") as string);
     let redirectTo: string = "";
     if (!form.valid) {
       return fail(400, { form });
@@ -55,8 +55,11 @@ export const actions = {
          Instead, it returns a generic 'wrong password' error. */
         if (response.error?.status == 400) error = "Wrong password.";
         if (response.error) return setError(form, "password", error);
+        redirectTo = "/";
         break;
       }
+      case null:
+        return { form };
     }
     throw redirect(301, redirectTo);
   }
