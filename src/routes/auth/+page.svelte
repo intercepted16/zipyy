@@ -7,6 +7,8 @@
   import { yupClient } from "sveltekit-superforms/adapters";
   import { Input } from "$lib/components/ui/input/index.js";
   import ResetPasswordDialog from "$lib/components/ResetPasswordDialog.svelte";
+  import { Button } from "$ui/button";
+  import { buttonVariants } from "$ui/button";
   export let data: PageData;
   const supabase = data.supabase;
   let signupOrLogin: string;
@@ -94,7 +96,9 @@
       </div>
       <div class="flex flex-col !mt-2">
         {#if signupOrLogin == "login"}
-          <ResetPasswordDialog {resetPasswordForm} open={resetDialogOpen} />
+          <Button variant="link" on:click={() => (resetDialogOpen = true)}
+            >Forgot your password?</Button>
+          <ResetPasswordDialog {resetPasswordForm} bind:open={resetDialogOpen} />
         {/if}
         <span class="mx-auto text-sm font-semibold leading-relaxed text-gray-500"
           >By continuing, you agree to use the Software according to the <a

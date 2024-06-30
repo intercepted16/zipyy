@@ -1,7 +1,6 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { buttonVariants } from "$lib/components/ui/button/index.js";
   import * as Form from "$ui/form";
   import type { Infer, SuperForm } from "sveltekit-superforms";
   import type { resetPasswordSchema } from "$types/validation/schema";
@@ -11,8 +10,6 @@
 </script>
 
 <AlertDialog.Root bind:open>
-  <AlertDialog.Trigger class={buttonVariants({ variant: "link" })}
-    >Forgot your password?</AlertDialog.Trigger>
   <AlertDialog.Content class="sm:max-w-[475px]">
     <AlertDialog.Header>
       <AlertDialog.Title>Reset your password</AlertDialog.Title>
