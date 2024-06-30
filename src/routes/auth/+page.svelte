@@ -8,7 +8,6 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import ResetPasswordDialog from "$lib/components/ResetPasswordDialog.svelte";
   import { Button } from "$ui/button";
-  import { buttonVariants } from "$ui/button";
   export let data: PageData;
   const supabase = data.supabase;
   let signupOrLogin: string;
