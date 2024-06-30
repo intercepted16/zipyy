@@ -6,7 +6,6 @@ declare global {
       supabase: SupabaseClient;
       supabaseAdmin: SupabaseClient;
       getSession: () => Promise<Session | null>;
-      session: Session | null;
       user: User | null;
       userExists(email: string): Promise<boolean>;
     }

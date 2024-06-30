@@ -5,12 +5,12 @@ import { yup } from "sveltekit-superforms/adapters";
 import type { AuthResponse } from "@supabase/supabase-js";
 import type { ErrorCode } from "@supabase/auth-js/src/lib/error-codes";
 import errors from "$lib/errors";
-export const load = async ({ url, locals: { session } }) => {
+export const load = async ({ url, locals: { getSession } }) => {
   /* We don't need to use the JWT verified Session object.
      This is because it is not a security risk
      if the user modifies the Session object, as it is only used to check for the
      existence of a session.*/
-  if (session) {
+  if (await getSession()) {
     return redirect(303, "/");
   }
 
