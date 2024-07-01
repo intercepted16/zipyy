@@ -2,7 +2,7 @@ import { redirect, type Handle, type RequestEvent } from "@sveltejs/kit";
 import { RetryAfterRateLimiter } from "sveltekit-rate-limiter/server";
 import { createServerClient } from "@supabase/ssr";
 const limiter = new RetryAfterRateLimiter({
-  IP: [100, "m"]
+  IP: [50, "m"]
 });
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from "$env/static/public";
 import { PRIVATE_SUPABASE_SERVICE_ROLE_KEY } from "$env/static/private";
