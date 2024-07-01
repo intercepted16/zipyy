@@ -8,10 +8,6 @@
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-.vercel
-
-vercel.json
-
 .env*.local
 /.idea
 /.vscode

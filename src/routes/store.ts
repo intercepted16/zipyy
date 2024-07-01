@@ -26,5 +26,5 @@ export const urlData: WritableReset<ShortenedUrls[]> | null =
 export const editDialog = writable(false);
 export const invalidateUrlData = writable(false);
 //TODO: once I buy a domain, use that instead of /url
-export const shortenedUrlsRoute = dev ? "localhost:3000/url" : "zipyy.vercel.app/url";
+export const shortenedUrlsRoute = dev ? "localhost:3000/url" : "zipyy.pages.dev/url";
 export const id = writable(0);
