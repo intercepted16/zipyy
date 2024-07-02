@@ -8,11 +8,13 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import ResetPasswordDialog from "$lib/components/ResetPasswordDialog.svelte";
   import { Button } from "$ui/button";
-  import ArrowLeft from "$lucide/arrow-left.svelte";
+  import { pushState } from "$app/navigation";
+  import { page } from "$app/stores";
   export let data: PageData;
   const supabase = data.supabase;
-  let signupOrLogin: string | undefined;
-  let loginState: number = 0;
+  $: loginState = $page.state.loginState ?? 0;
+  $: signupOrLogin = $page.state.signupOrLogin;
+
   let resetDialogOpen: boolean = false;
   const loginForm = superForm(data.loginForm, {
     validators: yupClient(loginSchema),
@@ -26,7 +28,10 @@
         .data as boolean;
 
       userExists ? (signupOrLogin = "login") : (signupOrLogin = "signup");
-      loginState++;
+      pushState("", {
+        loginState: 1,
+        signupOrLogin: signupOrLogin
+      });
       const el = document.querySelector("input[type='password']") as HTMLElement | null;
       if (el) observeAndFocus(el);
       return 0;
@@ -60,14 +65,6 @@
   <div
     class="px-6 pt-2 pb-12 bg-white rounded-lg shadow dark:bg-gray-900 dark:text-white sm:px-12 w-[450px]">
     <div class="my-5 space-y-6">
-      <Button
-        variant="ghost"
-        disabled={loginState === 0}
-        on:click={() => {
-          //TODO: if the next time we click Next is after we've gone back from loginState 1, we don't need to RPC the userExists() again.
-          loginState = 0;
-          signupOrLogin = undefined;
-        }}><ArrowLeft></ArrowLeft></Button>
       <img class="w-auto h-10 mx-auto rounded" src="/img/logo.webp" alt="Your Company" />
       <h2
         class="text-2xl font-bold leading-9 tracking-tight text-center text-gray-900 dark:text-white">
@@ -75,7 +72,7 @@
       </h2>
     </div>
     <form method="POST" class="space-y-6" action="?/login" use:enhance>
-      <div class={loginState === 1 ? "hidden" : ""}>
+      <div class={loginState == 1 ? "hidden" : ""}>
         <Form.Field form={loginForm} name="email">
           <Form.Control let:attrs>
             <Form.Label>Email address</Form.Label>
@@ -84,7 +81,7 @@
           </Form.Control>
         </Form.Field>
       </div>
-      <div class={loginState === 0 ? "hidden" : ""}>
+      <div class={loginState == 0 ? "hidden" : ""}>
         <Form.Field form={loginForm} name="password">
           <Form.Control let:attrs>
             <Form.Label>Password</Form.Label>

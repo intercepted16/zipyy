@@ -13,7 +13,10 @@ declare global {
       session: Session | null;
     }
     // interface Error {}
-    // interface PageState {}
+    interface PageState {
+      loginState: number;
+      signupOrLogin: string;
+    }
     interface Platform {
       env?: {
         PUBLIC_SUPABASE_ANON_KEY: string;
