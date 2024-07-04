@@ -1,4 +1,4 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
+import { fontFamily, screens as defaultScreens } from "tailwindcss/defaultTheme";
 import type { Config } from "tailwindcss";
 
 const config = {
@@ -6,12 +6,13 @@ const config = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
   safelist: ["dark"],
   theme: {
+    screens: {
+      xs: "475px",
+      ...defaultScreens
+    },
     container: {
       center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px"
-      }
+      padding: "2rem"
     },
     extend: {
       colors: {

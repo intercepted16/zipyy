@@ -29,8 +29,9 @@
           {/await}
         {:else}
           <div class="mx-4 space-x-2">
-            <Button href="/auth">Signup</Button>
-            <Button href="/auth">Login</Button>
+            <Button href="/auth" class="hidden xs:inline-flex">Signup</Button>
+            <Button href="/auth" class="hidden xs:inline-flex">Login</Button>
+            <Button href="/auth" class="xs:hidden">Authenticate</Button>
           </div>
         {/if}
         <nav class="flex items-center">
