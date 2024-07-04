@@ -9,10 +9,11 @@
 <header
   class="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
   <div class="container flex items-center h-14 max-w-screen-2xl">
-    <div class="hidden mr-4 md:flex">
-      <a href="/" class="flex items-center mr-6 space-x-2">
+    <div class="sm:justify-start sm:flex-none">
+      <a href="/" class="flex items-center space-x-2">
         <img src="/img/favicon.webp" alt="" class="w-8 h-8" />
-        <span class="hidden font-bold sm:inline-block">zipyy</span></a>
+        <span class="font-bold inline-block">zipyy</span>
+      </a>
     </div>
     {#await Promise.all( [import("$lib/components/Dropdowns/Theme/ThemeDropdown.svelte"), new Promise( (resolve) => setTimeout(resolve, 250) )] )}
       <div class="flex items-center justify-between flex-1 space-x-2 md:justify-end">
