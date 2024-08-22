@@ -5,13 +5,13 @@ compatibility_date = "2024-05-05"
 
 [vars]
 NODE_VERSION = "16"
-PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcmN2ZWZydmdjYmV6d21xZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA2NDk5ODksImV4cCI6MjAyNjIyNTk4OX0.oakUr5sv5qfbCXbV6VAMd8EQLRCkTDN7fatD77LPjTc"
-PUBLIC_SUPABASE_URL = "https://zkrcvefrvgcbezwmqdmc.supabase.co"
+PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzI0MjQ4ODAwLAogICJleHAiOiAxODgyMDE1MjAwCn0.uTa7HOIRBFB9SnyGEJcIrR1i7bLziv3eHoM3R_FoxVw"
+PUBLIC_SUPABASE_URL = "https://supabase-zipyy.i16.me"
 
 [env.production]
 compatibility_date = "2024-05-05"
 
 [env.production.vars]
 NODE_VERSION = "16"
-PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InprcmN2ZWZydmdjYmV6d21xZG1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA2NDk5ODksImV4cCI6MjAyNjIyNTk4OX0.oakUr5sv5qfbCXbV6VAMd8EQLRCkTDN7fatD77LPjTc"
-PUBLIC_SUPABASE_URL = "https://zkrcvefrvgcbezwmqdmc.supabase.co"
+PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogImFub24iLAogICJpc3MiOiAic3VwYWJhc2UiLAogICJpYXQiOiAxNzI0MjQ4ODAwLAogICJleHAiOiAxODgyMDE1MjAwCn0.uTa7HOIRBFB9SnyGEJcIrR1i7bLziv3eHoM3R_FoxVw"
+PUBLIC_SUPABASE_URL = "https://supabase-zipyy.i16.me"
